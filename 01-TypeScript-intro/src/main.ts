@@ -1,5 +1,6 @@
 import { name, age } from './bases/01-types';
 import { pokemonIds, bulbasaur, pokemons } from './bases/02-objects';
+import { charmander, meow } from './bases/03-classes';
 import './style.css';
 
 document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
@@ -10,5 +11,8 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
     <h2>Hello ${pokemonIds.join(', ')}</h2>
     <h2>${bulbasaur.name}</h2>
     <h2>${pokemons.join(', ')}</h2>
+    <h1>03-classes</h1>
+    <h2>${charmander.name}</h2>
+    <h2>${meow.name}</h2>
   </div>
 `;
