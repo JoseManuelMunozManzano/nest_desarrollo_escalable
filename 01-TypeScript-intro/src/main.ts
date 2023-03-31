@@ -1,3 +1,4 @@
+import { name, age } from './bases/01-types';
 import './style.css';
 import typescriptLogo from './typescript.svg';
 import viteLogo from '/vite.svg';
@@ -5,6 +6,7 @@ import { setupCounter } from './counter';
 
 document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
   <div>
+    <h1>Hello ${name}, ${age}</h1>
     <a href="https://vitejs.dev" target="_blank">
       <img src="${viteLogo}" class="logo" alt="Vite logo" />
     </a>
