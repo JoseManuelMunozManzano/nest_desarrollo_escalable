@@ -30,3 +30,10 @@ export const charmander: Pokemon = {
   name: 'Charmander',
   age: 1,
 };
+
+// Tipos en arreglos
+export const pokemons: Pokemon[] = [];
+
+pokemons.push(charmander, bulbasaur);
+
+console.log(pokemons);
