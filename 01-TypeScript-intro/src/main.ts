@@ -3,6 +3,7 @@ import { pokemonIds, bulbasaur, pokemons } from './bases/02-objects';
 import { charmander, meow } from './bases/03-classes';
 import { charmander as charmander2 } from './bases/04-metodos-asincronos';
 import { charmander as charmander3, pikachu } from './bases/05-inyection';
+import { charmander as charmander4 } from './bases/06-decorators';
 import './style.css';
 
 document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
@@ -21,5 +22,7 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
     <h1>05-inyection</h1>
     <h2>${charmander3.name} ${charmander3.id}</h2>
     <h2>${pikachu.name} ${pikachu.id}</h2>
+    <h1>06-decorators</h1>
+    <h2>${charmander4.name}</h2>
   </div>
 `;
