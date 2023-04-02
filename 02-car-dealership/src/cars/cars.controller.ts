@@ -4,7 +4,7 @@ import {
   Delete,
   Get,
   Param,
-  ParseIntPipe,
+  ParseUUIDPipe,
   Patch,
   Post,
 } from '@nestjs/common';
@@ -24,17 +24,13 @@ export class CarsController {
     return this.carsService.findAll();
   }
 
-  // Tenemos que validar que el id sea un número, y de hecho queremos que sea un número de entrada,
-  // no el string que entra por defecto, y no tener que transformarlo nosotros.
-  // Habría que realizar un manejo de excepciones, pero Nest ya nos puede ayudar con ello (Pipes).
-  // Los pipes transforman la data recibida en los requests.
-  // Con @UsePipes indicamos que usamos pipes. Se usa ValidationPipe para validar la información del request.
-  // Se pueden informar varios pipes en cadena.
-  // Si ahora se mandara un texto, por ejemplo: http://localhost:3000/cars/1
-  // daría un status 400 (antes de usar pipes era 200) con un mensaje indicando que se espera un
-  // número
+  // Para validar que el id es realmente un uuid usamos el pipe ParseUUIDPipe.
+  // Si el id no es un uuid correcto ni siquiera llega al servicio.
+  // Probar uuid incorrecto: http://localhost:3000/cars/xx1
+  // UUID trabaja con varias versiones. Se puede validar un UUID de una versión en concreto.
+  // También se puede validar el mensaje si hay error, el status code y varias cosas más.
   @Get(':id')
-  getCarById(@Param('id', ParseIntPipe) id: number) {
+  getCarById(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string) {
     return this.carsService.findOneById(id);
   }
 
@@ -49,13 +45,13 @@ export class CarsController {
   // Tendremos que validar que el id a actualizar existe y que el body tenga las properties que
   // necesitamos, como string.
   @Patch(':id')
-  updateCar(@Param('id', ParseIntPipe) id: number, @Body() body: any) {
+  updateCar(@Param('id', ParseUUIDPipe) id: string, @Body() body: any) {
     return body;
   }
 
   // Tendremos que validar que el id a eliminar existe
   @Delete(':id')
-  deleteCar(@Param('id', ParseIntPipe) id: number) {
+  deleteCar(@Param('id', ParseUUIDPipe) id: string) {
     return {
       method: 'delete',
       id,

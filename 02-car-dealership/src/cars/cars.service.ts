@@ -6,22 +6,29 @@
 // Los providers son clases que se pueden inyectar. Pero no todos los providers van a tener
 // lógica de negocio (no todos son servicios)
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { v4 as uuid } from 'uuid';
+import { Car } from './interfaces/car.interface';
 
 @Injectable()
 export class CarsService {
-  private cars = [
+  // Se ha creado la interface Car para obligar a que nos envíen la data de la manera que queremos.
+  // También dejamos de usar el id como un correlativo y usamos uuid.
+  // https://www.npmjs.com/package/uuid
+  // Para instalar: yarn add uuid
+  // Y para la definición de tipos para TypeScript: yarn add -D @types/uuid
+  private cars: Car[] = [
     {
-      id: 1,
+      id: uuid(),
       brand: 'Toyota',
       model: 'Corolla',
     },
     {
-      id: 2,
+      id: uuid(),
       brand: 'Honda',
       model: 'Civic',
     },
     {
-      id: 3,
+      id: uuid(),
       brand: 'Jeep',
       model: 'Cherokee',
     },
@@ -33,13 +40,13 @@ export class CarsService {
   }
 
   // Sigue habiendo otro error.
-  // Si se manda como id un número que no existe devuelve un status 200 en vez de un 404.
+  // Si se manda como id un string que no existe devuelve un status 200 en vez de un 404.
   // Para corregir esto, Nest dispone de varios Exception Filters.
   // Como nos encontramos dentro de la exception zone definida por Nest, Nest se encarga de manejar
   // las excepciones que lancemos (throw).
   // La Exception zone incluye:
   //   Guards -> Before Interceptor -> Pipes -> Controllers -> Decorators -> After Interceptor
-  findOneById(id: number) {
+  findOneById(id: string) {
     const car = this.cars.find((car) => car.id === id);
 
     // Para probar en Postman ir a la ruta: localhost:3000/cars/4
