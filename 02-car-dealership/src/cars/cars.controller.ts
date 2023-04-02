@@ -1,4 +1,13 @@
-import { Controller, Get, Param, ParseIntPipe } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  ParseIntPipe,
+  Patch,
+  Post,
+} from '@nestjs/common';
 import { CarsService } from './cars.service';
 
 // El controlador escucha las solicitudes de los clientes y emite una respuesta
@@ -27,5 +36,29 @@ export class CarsController {
   @Get(':id')
   getCarById(@Param('id', ParseIntPipe) id: number) {
     return this.carsService.findOneById(id);
+  }
+
+  // Obtenemos el body de la petición con el decorador @Body()
+  // Tendremos que validar que el body de la petición incluya las properties brand y model, como string.
+  @Post()
+  createCar(@Body() body: any) {
+    return body;
+  }
+
+  // Nota: es indiferente indicar '/:id' o ':id'
+  // Tendremos que validar que el id a actualizar existe y que el body tenga las properties que
+  // necesitamos, como string.
+  @Patch(':id')
+  updateCar(@Param('id', ParseIntPipe) id: number, @Body() body: any) {
+    return body;
+  }
+
+  // Tendremos que validar que el id a eliminar existe
+  @Delete(':id')
+  deleteCar(@Param('id', ParseIntPipe) id: number) {
+    return {
+      method: 'delete',
+      id,
+    };
   }
 }
