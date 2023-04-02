@@ -10,6 +10,7 @@ import {
 } from '@nestjs/common';
 import { CarsService } from './cars.service';
 import { CreateCarDto } from './dtos/create-car.dto';
+import { UpdateCarDto } from './dtos/update-car.dto';
 
 // El controlador escucha las solicitudes de los clientes y emite una respuesta
 @Controller('cars')
@@ -46,11 +47,17 @@ export class CarsController {
   }
 
   // Nota: es indiferente indicar '/:id' o ':id'
-  // Tendremos que validar que el id a actualizar existe y que el body tenga las properties que
-  // necesitamos, como string.
+  // Tendremos que validar que el id a actualizar existe y que el body (updateCarDto) tenga las
+  // properties que necesitamos, como string.
+  // Hay que tener cuidado con que DTO usar porque a lo mejor solo queremos actualizar el modelo
+  // y nuestro DTO CreateCarDto nos indica que tenemos que informar tanto la marca como el modelo.
+  // Creamos un nuevo DTO UpdateCarDto.
   @Patch(':id')
-  updateCar(@Param('id', ParseUUIDPipe) id: string, @Body() body: any) {
-    return body;
+  updateCar(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() updateCarDto: UpdateCarDto,
+  ) {
+    return updateCarDto;
   }
 
   // Tendremos que validar que el id a eliminar existe

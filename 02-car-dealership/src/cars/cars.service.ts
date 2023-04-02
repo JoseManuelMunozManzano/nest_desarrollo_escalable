@@ -9,7 +9,8 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { v4 as uuid } from 'uuid';
 
 import { Car } from './interfaces/car.interface';
-import { CreateCarDto } from './dtos/create-car.dto';
+// No se informa, pero es './dtos/index.ts
+import { CreateCarDto, UpdateCarDto } from './dtos';
 
 @Injectable()
 export class CarsService {
@@ -72,4 +73,6 @@ export class CarsService {
 
     return car;
   }
+
+  update(id: string, updateCarDto: UpdateCarDto) {}
 }
