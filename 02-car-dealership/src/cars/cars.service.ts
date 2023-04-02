@@ -103,4 +103,11 @@ export class CarsService {
 
     return carDB;
   }
+
+  delete(id: string) {
+    this.findOneById(id);
+    this.cars = this.cars.filter((car) => id !== car.id);
+
+    // Si no hay un return explícito por defecto devuelve undefined, pero Nest no devuelve nada.
+  }
 }

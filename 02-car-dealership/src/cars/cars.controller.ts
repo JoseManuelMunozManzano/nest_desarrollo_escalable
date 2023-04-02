@@ -65,9 +65,6 @@ export class CarsController {
   // Tendremos que validar que el id a eliminar existe
   @Delete(':id')
   deleteCar(@Param('id', ParseUUIDPipe) id: string) {
-    return {
-      method: 'delete',
-      id,
-    };
+    return this.carsService.delete(id);
   }
 }
