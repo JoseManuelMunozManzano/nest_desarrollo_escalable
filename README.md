@@ -31,7 +31,7 @@ Proyecto creado con: nest new 02-car-dealership
 
 Para levantar el proyecto: yarn start:dev
 
-Y para verlo en web acceder a: http://localhost:3000/
+Y para probarlo en postman coger el fuente: Pruebas Postman.json
 
 Se ha visto:
 
