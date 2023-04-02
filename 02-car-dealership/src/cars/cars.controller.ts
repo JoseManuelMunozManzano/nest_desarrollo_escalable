@@ -9,6 +9,7 @@ import {
   Post,
 } from '@nestjs/common';
 import { CarsService } from './cars.service';
+import { CreateCarDto } from './dtos/create-car.dto';
 
 // El controlador escucha las solicitudes de los clientes y emite una respuesta
 @Controller('cars')
@@ -34,11 +35,13 @@ export class CarsController {
     return this.carsService.findOneById(id);
   }
 
-  // Obtenemos el body de la petición con el decorador @Body()
+  // Obtenemos la data createCarDto de la petición con el decorador @Body()
   // Tendremos que validar que el body de la petición incluya las properties brand y model, como string.
+  // Para conseguir esto usamos el DTO CreateCarDto.
+  // Pero por si solo esto no funciona. Hay que decirle a Nest que aplique la validación de los DTO.
   @Post()
-  createCar(@Body() body: any) {
-    return body;
+  createCar(@Body() createCarDto: CreateCarDto) {
+    return createCarDto;
   }
 
   // Nota: es indiferente indicar '/:id' o ':id'
