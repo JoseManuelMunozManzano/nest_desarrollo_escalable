@@ -14,7 +14,11 @@ import { CarsService } from './cars.service';
 import { CreateCarDto } from './dtos/create-car.dto';
 
 // El controlador escucha las solicitudes de los clientes y emite una respuesta
+// Nos llevamos el ValidationPipe a nivel de controlador para no tener que estar informándolo
+// en cada método que nos haga falta.
+// Problema: Esta validación debería de poder usarse en todos los controladores, no solo en este.
 @Controller('cars')
+@UsePipes(ValidationPipe)
 export class CarsController {
   // Inyección de dependencia.
   // Para que Nest cree la instancia de CarsController tiene la dependencia de CarsService.
@@ -51,11 +55,7 @@ export class CarsController {
   // 4. A nivel global de aplicación (en main.ts)
   //
   // Para validaciones hay que instalar: yarn add class-validator class-transformer
-  //
-  // El problema del ValidationPipe a nivel de método es que para cada método (POST, PATCH)
-  // tenemos que estar poniéndolo y Nest trabaja mucho con el princpio DRY (Don't repeat yourself)
   @Post()
-  @UsePipes(ValidationPipe)
   createCar(@Body() createCarDto: CreateCarDto) {
     return createCarDto;
   }
