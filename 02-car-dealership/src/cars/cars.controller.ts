@@ -7,6 +7,8 @@ import {
   ParseUUIDPipe,
   Patch,
   Post,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { CarsService } from './cars.service';
 import { CreateCarDto } from './dtos/create-car.dto';
@@ -39,7 +41,21 @@ export class CarsController {
   // Tendremos que validar que el body de la petición incluya las properties brand y model, como string.
   // Para conseguir esto usamos el DTO CreateCarDto.
   // Pero por si solo esto no funciona. Hay que decirle a Nest que aplique la validación de los DTO.
+  //
+  // Hay 4 sitios donde se pueden aplicar los pipes:
+  // 1. En parámetros.
+  //      deleteCar(@Param('id', ParseUUIDPipe, otro_pipe...) id: string) {}
+  // 2. En un método de controlador.
+  //      @UsePipes(ValidationPipe)
+  // 3. A nivel global de controlador.
+  // 4. A nivel global de aplicación (en main.ts)
+  //
+  // Para validaciones hay que instalar: yarn add class-validator class-transformer
+  //
+  // El problema del ValidationPipe a nivel de método es que para cada método (POST, PATCH)
+  // tenemos que estar poniéndolo y Nest trabaja mucho con el princpio DRY (Don't repeat yourself)
   @Post()
+  @UsePipes(ValidationPipe)
   createCar(@Body() createCarDto: CreateCarDto) {
     return createCarDto;
   }
