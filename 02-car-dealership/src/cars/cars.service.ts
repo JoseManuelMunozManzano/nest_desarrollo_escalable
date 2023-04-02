@@ -5,7 +5,11 @@
 //
 // Los providers son clases que se pueden inyectar. Pero no todos los providers van a tener
 // lógica de negocio (no todos son servicios)
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { v4 as uuid } from 'uuid';
 
 import { Car } from './interfaces/car.interface';
@@ -74,5 +78,29 @@ export class CarsService {
     return car;
   }
 
-  update(id: string, updateCarDto: UpdateCarDto) {}
+  update(id: string, updateCarDto: UpdateCarDto) {
+    // Uso de DRY para ver si el id existe, es decir, se reutiliza findOneById
+    let carDB = this.findOneById(id);
+
+    // Si el id que me envían en la url es distinto al que me envían en el json updateCarDto
+    if (updateCarDto.id && updateCarDto.id !== id)
+      throw new BadRequestException(`Car id inside body is not valid`);
+
+    this.cars = this.cars.map((car) => {
+      // Si es el id que quiero modificar (el que viene en la url)
+      if (car.id === id) {
+        // Esto es JS. Spread de carDB y se sustituye por lo que venga en updateCarDto.
+        // Como podrían mandarme cualquier cosa como id (uuid correcto) en updateCarDto,
+        // lo sustituyo por el id que me viene en la url. Esto se queda, pero arriba ya se manda
+        // una excepción.
+        // En los ejemplos con BD esto es mucho más sencillo.
+        carDB = { ...carDB, ...updateCarDto, id };
+        return carDB;
+      }
+
+      return car;
+    });
+
+    return carDB;
+  }
 }

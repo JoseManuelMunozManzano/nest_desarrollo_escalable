@@ -57,7 +57,9 @@ export class CarsController {
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateCarDto: UpdateCarDto,
   ) {
-    return updateCarDto;
+    // Veremos que cuando vaya a BBDD esto queda igual porque Nest esperará al resultado de la
+    // Promise para devolver la respuesta.
+    return this.carsService.update(id, updateCarDto);
   }
 
   // Tendremos que validar que el id a eliminar existe
