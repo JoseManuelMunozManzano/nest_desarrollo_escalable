@@ -50,5 +50,6 @@ Se ha visto:
 - Class Transformer
 - Seguir el principio DRY (Don't repeat yourself)
 - Algunos decoradores del Class Validator útiles
+- Entities
 - Comunicar módulo seed, con los otros módulos de nuestra aplicación
 - Problemas con inyección de dependencias de módulos externos
