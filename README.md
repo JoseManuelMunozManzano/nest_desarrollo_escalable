@@ -53,3 +53,10 @@ Se ha visto:
 - Entities
 - Comunicar módulo seed, con los otros módulos de nuestra aplicación
 - Problemas con inyección de dependencias de módulos externos
+
+Generar build de producción muy básico:
+
+```
+yarn build
+yarn start:prod
+```
