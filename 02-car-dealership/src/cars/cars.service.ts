@@ -24,21 +24,11 @@ export class CarsService {
   // Para instalar: yarn add uuid
   // Y para la definición de tipos para TypeScript: yarn add -D @types/uuid
   private cars: Car[] = [
-    {
-      id: uuid(),
-      brand: 'Toyota',
-      model: 'Corolla',
-    },
-    {
-      id: uuid(),
-      brand: 'Honda',
-      model: 'Civic',
-    },
-    {
-      id: uuid(),
-      brand: 'Jeep',
-      model: 'Cherokee',
-    },
+    // {
+    //   id: uuid(),
+    //   brand: 'Toyota',
+    //   model: 'Corolla',
+    // },
   ];
 
   // Como cars es privado, los devolvemos desde este método público
