@@ -7,7 +7,36 @@
 	},
 	"item": [
 		{
-			"name": "getAllCars - Esto lo primero",
+			"name": "populateBD - Esto lo primero",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:3000/seed",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"seed"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getAllCars - Lo primero de Cars",
 			"event": [
 				{
 					"listen": "test",
@@ -171,7 +200,7 @@
 			"response": []
 		},
 		{
-			"name": "getAllBrands - Esto lo primero",
+			"name": "getAllBrands - Lo primero de Brands",
 			"event": [
 				{
 					"listen": "test",
@@ -258,7 +287,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"name\": \"toyota_2\"\n}",
+					"raw": "{\n    \"name\": \"volvo_2\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"

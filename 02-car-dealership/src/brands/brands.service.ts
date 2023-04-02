@@ -62,4 +62,10 @@ export class BrandsService {
   remove(id: string) {
     this.brands = this.brands.filter((brand) => brand.id !== id);
   }
+
+  // Para rellenar la data usando la semilla.
+  // Esto en un proyecto real no tiene sentido porque se informa en la BD.
+  fillBrandsWithSeedData(brands: Brand[]) {
+    this.brands = brands;
+  }
 }

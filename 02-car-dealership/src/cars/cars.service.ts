@@ -100,4 +100,10 @@ export class CarsService {
 
     // Si no hay un return explícito por defecto devuelve undefined, pero Nest no devuelve nada.
   }
+
+  // Para rellenar la data usando la semilla.
+  // Esto en un proyecto real no tiene sentido porque se informa en la BD.
+  fillCarsWithSeedData(cars: Car[]) {
+    this.cars = cars;
+  }
 }
