@@ -169,6 +169,134 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "getAllBrands - Esto lo primero",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const jsonData = pm.response.json();",
+							"",
+							"pm.test('Validate getAllBrands Successfully', () => {",
+							"    pm.response.to.have.status(200);",
+							"",
+							"    pm.collectionVariables.set('brandId', jsonData[0].id);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:3000/brands",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"brands"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getBrandById",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:3000/brands/{{brandId}}",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"brands",
+						"{{brandId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "createBrand",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"Honda\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/brands",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"brands"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "updateBrand",
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"toyota_2\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/brands/{{brandId}}",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"brands",
+						"{{brandId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "deleteBrand",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "localhost:3000/brands/{{brandId}}",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"brands",
+						"{{brandId}}"
+					]
+				}
+			},
+			"response": []
 		}
 	],
 	"event": [
@@ -194,6 +322,11 @@
 	"variable": [
 		{
 			"key": "carId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "brandId",
 			"value": "",
 			"type": "string"
 		}

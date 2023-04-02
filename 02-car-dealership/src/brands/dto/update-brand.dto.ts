@@ -4,7 +4,16 @@
 // También se pueden añadir características únicas que tenga UpdateBrandDto.
 //
 // Esto es como lo que indicamos (pero no hicimos) en cars/dtos/UpdateCarDto
-import { PartialType } from '@nestjs/mapped-types';
-import { CreateBrandDto } from './create-brand.dto';
 
-export class UpdateBrandDto extends PartialType(CreateBrandDto) {}
+// import { PartialType } from '@nestjs/mapped-types';
+// import { CreateBrandDto } from './create-brand.dto';
+
+// export class UpdateBrandDto extends PartialType(CreateBrandDto) {}
+
+// NOTA: Para este caso no hace falta extender nada.
+import { IsString, MinLength } from 'class-validator';
+export class UpdateBrandDto {
+  @IsString()
+  @MinLength(1)
+  name: string;
+}
