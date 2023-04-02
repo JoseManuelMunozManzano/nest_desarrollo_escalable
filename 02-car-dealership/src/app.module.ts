@@ -2,9 +2,10 @@
 // Va a tener las referencias a todos los otros módulos, servicios, etc. que conforman mi aplicación.
 import { Module } from '@nestjs/common';
 import { CarsModule } from './cars/cars.module';
+import { BrandsModule } from './brands/brands.module';
 
 @Module({
-  imports: [CarsModule],
+  imports: [CarsModule, BrandsModule],
   controllers: [],
   providers: [],
   exports: [],
