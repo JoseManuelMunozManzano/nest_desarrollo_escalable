@@ -7,7 +7,9 @@
 // lógica de negocio (no todos son servicios)
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { v4 as uuid } from 'uuid';
+
 import { Car } from './interfaces/car.interface';
+import { CreateCarDto } from './dtos/create-car.dto';
 
 @Injectable()
 export class CarsService {
@@ -52,6 +54,21 @@ export class CarsService {
     // Para probar en Postman ir a la ruta: localhost:3000/cars/4
     if (!car)
       http: throw new NotFoundException(`Car with id '${id}' not found`);
+
+    return car;
+  }
+
+  create(createCarDto: CreateCarDto) {
+    const car: Car = {
+      id: uuid(),
+      ...createCarDto,
+    };
+
+    // El brand, model podría existir, pero no nos importa. Queremos aprender como se hace el POST.
+    // En los ejemplos sobre BBDD esto se controlará.
+    // Igualmente, si fuera sobre BBDD habría que hacer un async await y esperar que la inserción
+    // fuera correcta.
+    this.cars.push(car);
 
     return car;
   }

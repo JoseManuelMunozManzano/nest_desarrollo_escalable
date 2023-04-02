@@ -42,7 +42,7 @@ export class CarsController {
   // (ver main.ts)
   @Post()
   createCar(@Body() createCarDto: CreateCarDto) {
-    return createCarDto;
+    return this.carsService.create(createCarDto);
   }
 
   // Nota: es indiferente indicar '/:id' o ':id'
