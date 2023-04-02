@@ -6,7 +6,7 @@
 // Estos validators vienen de haber instalado class-validator
 //
 
-import { IsString } from 'class-validator';
+import { IsString, MinLength } from 'class-validator';
 
 // Es buena práctica que sean readonly para no modificar lo que nos llega en el request.
 export class CreateCarDto {
@@ -16,5 +16,6 @@ export class CreateCarDto {
   readonly brand: string;
 
   @IsString()
+  @MinLength(3)
   readonly model: string;
 }
