@@ -89,8 +89,15 @@ Proyecto creado con:
 nest new 03-pokedex
 ```
 
+Se sirve un contenido estático anecdótico, para aprender como se hace en la ruta:
+
+```
+http://localhost:3000
+```
+
 Se ha visto:
 
+- Servir contenido estático
 - CRUD contra base de datos
 - Docker y Docker Compose
 - Conectar contenedor con filesystem (para mantener la data de la base de datos)
