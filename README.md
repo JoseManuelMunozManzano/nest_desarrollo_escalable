@@ -98,6 +98,7 @@ http://localhost:3000
 Se ha visto:
 
 - Servir contenido estático
+- Global Prefix para los endpoints
 - CRUD contra base de datos
 - Docker y Docker Compose
 - Conectar contenedor con filesystem (para mantener la data de la base de datos)
