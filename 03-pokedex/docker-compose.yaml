@@ -1,0 +1,22 @@
+version: '3'
+
+# Para levantar esta imagen ejecutar:
+# docker-compose up -d
+services:
+  db:
+    image: mongo:5
+    # Reiniciar el contenedor si se detiene.
+    restart: always
+    ports:
+      # Mi puerto : puerto en Docker
+      - 27018:27017
+    environment:
+      # El password queda pendiente para cuando se quiera hacer un despliegue.
+      MONGODB_DATABASE: nest-pokemon
+    # Si se hacen inserciones y se borra el contenedor se pierde la información de la BD.
+    # La queremos persistente y eso se consigue usando volúmenes.
+    # Un volumen es una carpeta de mi ordenador donde se guardará la información de BD de Docker. La imagen de Docker
+    # trabaja con ese filesystem.
+    volumes:
+      # Mi filesystem : Docker
+      - ./mongo:/data/db
