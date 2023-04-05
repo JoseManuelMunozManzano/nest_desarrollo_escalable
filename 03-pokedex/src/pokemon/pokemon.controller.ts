@@ -6,6 +6,8 @@ import {
   Patch,
   Param,
   Delete,
+  HttpCode,
+  HttpStatus,
 } from '@nestjs/common';
 import { PokemonService } from './pokemon.service';
 import { CreatePokemonDto } from './dto/create-pokemon.dto';
@@ -19,7 +21,10 @@ import { UpdatePokemonDto } from './dto/update-pokemon.dto';
 export class PokemonController {
   constructor(private readonly pokemonService: PokemonService) {}
 
+  // Si queremos que con un POST, en vez de devolvernos un 201 nos devuelva un 200, utilizaremos @HttpCode(200)
+  // En vez de indicar el número, Nest también tiene constantes con esos valores, donde HttpStatus.OK es el valor 200.
   @Post()
+  @HttpCode(HttpStatus.OK)
   create(@Body() createPokemonDto: CreatePokemonDto) {
     return this.pokemonService.create(createPokemonDto);
   }

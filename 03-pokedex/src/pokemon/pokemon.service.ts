@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Pokemon } from './entities/pokemon.entity';
@@ -20,12 +24,25 @@ export class PokemonService {
   async create(createPokemonDto: CreatePokemonDto) {
     createPokemonDto.name = createPokemonDto.name.toLocaleLowerCase();
 
-    // Falta agregar validaciones.
-    // PROBLEMA: Si se intenta grabar dos veces el mismo no o el mismo name da error 500 sin indicar una
-    // información de que salió mal.
-    const pokemon = await this.pokemonModel.create(createPokemonDto);
+    // Validaciones.
+    // Con el try catch evitamos 2 consultas a BD (ver que no exista el campo no y que no exista el campo name).
+    try {
+      const pokemon = await this.pokemonModel.create(createPokemonDto);
+      return pokemon;
+    } catch (error) {
+      // El código 11000 es clave duplicada.
+      if (error.code === 11000) {
+        throw new BadRequestException(
+          `Pokemon exists in db ${JSON.stringify(error.keyValue)}`,
+        );
+      }
 
-    return pokemon;
+      // Otro tipo de problema
+      console.log(error);
+      throw new InternalServerErrorException(
+        `Can't create Pokemon - Check server logs`,
+      );
+    }
   }
 
   findAll() {
