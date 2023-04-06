@@ -85,8 +85,11 @@ export class PokemonService {
     }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} pokemon`;
+  async remove(id: string) {
+    const pokemon = await this.findOne(id);
+    // Este es un delete típico, pero en el siguiente git veremos como usar un CustomPipes para eliminar
+    // donde queremos que nos envíen un mongoId
+    await pokemon.deleteOne();
   }
 
   // Excepciones no controladas
