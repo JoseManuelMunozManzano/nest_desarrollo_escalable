@@ -81,8 +81,18 @@ export class PokemonService {
     return pokemon;
   }
 
-  update(id: number, updatePokemonDto: UpdatePokemonDto) {
-    return `This action updates a #${id} pokemon`;
+  async update(term: string, updatePokemonDto: UpdatePokemonDto) {
+    // Como no sé si me envían el nombre, el no o el MongoId tengo que buscar primero.
+    // Aprovecho el método de búsqueda ya creado que me devuelve un objeto pokemon.
+    const pokemon = await this.findOne(term);
+    if (updatePokemonDto.name)
+      updatePokemonDto.name = updatePokemonDto.name.toLocaleLowerCase();
+
+    await pokemon.updateOne(updatePokemonDto);
+
+    // Faltaría resolver el problema de que, al actualizar, pongamos como nuevos valores de no y/o name
+    // alguno que ya exista en BD ya que esto provocaría un error 500 de clave duplicada.
+    return { ...pokemon.toJSON(), ...updatePokemonDto };
   }
 
   remove(id: number) {
