@@ -31,18 +31,7 @@ export class PokemonService {
       const pokemon = await this.pokemonModel.create(createPokemonDto);
       return pokemon;
     } catch (error) {
-      // El código 11000 es clave duplicada.
-      if (error.code === 11000) {
-        throw new BadRequestException(
-          `Pokemon exists in db ${JSON.stringify(error.keyValue)}`,
-        );
-      }
-
-      // Otro tipo de problema
-      console.log(error);
-      throw new InternalServerErrorException(
-        `Can't create Pokemon - Check server logs`,
-      );
+      this.handleExceptions(error);
     }
   }
 
@@ -88,14 +77,30 @@ export class PokemonService {
     if (updatePokemonDto.name)
       updatePokemonDto.name = updatePokemonDto.name.toLocaleLowerCase();
 
-    await pokemon.updateOne(updatePokemonDto);
-
-    // Faltaría resolver el problema de que, al actualizar, pongamos como nuevos valores de no y/o name
-    // alguno que ya exista en BD ya que esto provocaría un error 500 de clave duplicada.
-    return { ...pokemon.toJSON(), ...updatePokemonDto };
+    try {
+      await pokemon.updateOne(updatePokemonDto);
+      return { ...pokemon.toJSON(), ...updatePokemonDto };
+    } catch (error) {
+      this.handleExceptions(error);
+    }
   }
 
   remove(id: number) {
     return `This action removes a #${id} pokemon`;
+  }
+
+  // Excepciones no controladas
+  private handleExceptions(error: any) {
+    // El código 11000 es clave duplicada.
+    if (error.code === 11000)
+      throw new BadRequestException(
+        `Pokemon exists in db ${JSON.stringify(error.keyValue)}`,
+      );
+
+    // Otro tipo de problema
+    console.log(error);
+    throw new InternalServerErrorException(
+      `Can't create Pokemon - Check server logs`,
+    );
   }
 }
