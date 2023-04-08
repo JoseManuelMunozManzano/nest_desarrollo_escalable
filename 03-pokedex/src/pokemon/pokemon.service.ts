@@ -88,10 +88,25 @@ export class PokemonService {
   // Es siempre un mongoId
   async remove(id: string) {
     // Con una sola consulta se busca y se borra.
-    // Problema: ahora mismo si es un mongoId correcto, pero que no existe en nuestra BD devuelve un 200.
-    // Queremos resolver el problema pero evitar una doble consulta (una de buscar y otra de eliminar)
-    const result = this.pokemonModel.findByIdAndDelete(id);
-    return result;
+    // Si no existe el mongoId en BD devuelve el siguiente objeto:
+    // {
+    //    "acknowledged": true,
+    //    "deletedCount": 0
+    // }
+    // indicando que se la cantidad de registros eliminados es 0
+    const { deletedCount } = await this.pokemonModel.deleteOne({ _id: id });
+    if (deletedCount === 0)
+      // Más adelante veremos como crear un ExceptionFilter para todos nuestros endpoints.
+      throw new BadRequestException(`Pokemon with id "${id}" not found`);
+
+    return;
+
+    // Otra forma de borrar usando de nuevo findByIdAndDelete
+    // const result = await this.pokemonModel.findByIdAndDelete(id);
+    // if (!result) {
+    //   throw new NotFoundException(`Pokemon with id "${id}" not found`);
+    // }
+    // return result;
   }
 
   // Excepciones no controladas
