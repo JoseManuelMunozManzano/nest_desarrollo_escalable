@@ -2,6 +2,7 @@ import { join } from 'path'; // en Node
 import { Module } from '@nestjs/common';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { MongooseModule } from '@nestjs/mongoose';
+import { ConfigModule } from '@nestjs/config';
 
 import { PokemonModule } from './pokemon/pokemon.module';
 import { CommonModule } from './common/common.module';
@@ -14,17 +15,35 @@ import { SeedModule } from './seed/seed.module';
   // Igual se haría para Angular, React, Vue...
   // NOTA: Cuando aparece la palabra Module, siempre va en los inputs.
   imports: [
+    // La posición es importante. Para las variables de entorno, poner al principio. Así evitamos
+    // usar una variable de entorno sin que las hayamos cargado primero.
+    ConfigModule.forRoot(),
+
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'public'),
     }),
     // Para conectar Nest con Mongo se han hecho las siguientes instalaciones.
     // yarn add @nestjs/mongoose mongoose.
     // https://docs.nestjs.com/techniques/mongodb
-    // Nos creamos la referencia a nuestra BD. Luego lo haremos con variables de entorno.
-    MongooseModule.forRoot('mongodb://localhost:27018/nest-pokemon'),
+    // Usamos variables de entorno. Ver fichero .env en raiz
+    MongooseModule.forRoot(process.env.MONGODB),
     PokemonModule,
     CommonModule,
     SeedModule,
   ],
 })
-export class AppModule {}
+export class AppModule {
+  // Node ya tiene, de por si, variables de entorno.
+  // Pero no aparecerán las de nuestro fichero .env hasta que no le digamos a Nest que las lea y las cargue para
+  // que podamos usarlas.
+  // Para ello hay que hacer 3 cosas:
+  // 1) Hay que instalar el siguiente paquete:
+  // yarn add @nestjs/config
+  // 2) E importar (arriba se ve) ConfigModule.forRoot()
+  // 3) Terminar la ejecución (Ctrl+C) y volver a ejecutar el proyecto.
+  //
+  // NOTA: Las variables de entorno, por defecto, siempre son string
+  constructor() {
+    console.log(process.env);
+  }
+}
