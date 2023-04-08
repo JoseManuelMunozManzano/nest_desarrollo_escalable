@@ -29,29 +29,31 @@ export class SeedService {
     await this.pokemonModel.deleteMany({});
 
     const { data } = await this.axios.get<PokeResponse>(
-      'https://pokeapi.co/api/v2/pokemon?limit=3',
+      'https://pokeapi.co/api/v2/pokemon?limit=650',
     );
 
-    // Forma 1 de resolver el problema de insertar de forma simultanea:
-    // Generar promesas y luego resolverlas todas a la vez.
-    const insertPromisesArray = [];
+    // RECOMENDADO: Forma 2 de resolver el problema de insertar de forma simultanea:
+    // Usando mongoose
+    const pokemonToInsert: { name: string; no: number }[] = [];
 
     data.results.forEach(({ name, url }) => {
       const segments = url.split('/');
       const no = +segments[segments.length - 2];
 
-      // No usamos pokemon.service.ts sino el create que proporciona mongoose, ya que es
-      // la dependencia que hemos inyectado.
-      // Problema: se hacen las inserciones de 1 en 1. Muy lento. Se debe hacer simultaneamente.
-      //await this.pokemonModel.create({ name, no });
-      //
-      // La promesa se guarda (no ha terminado)
-      insertPromisesArray.push(this.pokemonModel.create({ name, no }));
+      // Se guarda el dato del pokemon
+      pokemonToInsert.push({ name, no });
     });
 
-    // Ahora que tengo todas mis promesas guardadas, las resuelvo a la vez.
-    // Problema: guardamos muchas veces en el array insertPromisesArray.
-    await Promise.all(insertPromisesArray);
+    // Ahora que tengo todos los datos de mis pokemon, uso mongoose para guardarlos todos a la vez.
+    // Solo hace una inserción (con las promesas había muchas inserciones)
+    // La inserción sería algo así:
+    // INSERT INTO POKEMONS (name, no)
+    // (name: bulbasaur, no: 1)
+    // (name: bulbasaur, no: 1)
+    // (name: bulbasaur, no: 1)
+    // (name: bulbasaur, no: 1)
+    // (name: bulbasaur, no: 1)
+    this.pokemonModel.insertMany(pokemonToInsert);
 
     return 'Seed executed!';
   }
