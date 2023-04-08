@@ -12,6 +12,15 @@ async function bootstrap() {
     new ValidationPipe({
       whitelist: true,
       forbidNonWhitelisted: true,
+      // Forma 1 de transformar un valor de query parameter de string a number.
+      // Aquí, en nuestros GlobalPipes, podemos transformar nuestros DTOs en el tipo de datos que queremos usar.
+      // Tiene pros y contras.
+      // Como pros, es que es fácil de validar la data de los DTO porque ya vienen como queremos.
+      // Como contras, hay que procesar la información, lo que consume más memoria.
+      transform: true,
+      transformOptions: {
+        enableImplicitConversion: true,
+      },
     }),
   );
 
