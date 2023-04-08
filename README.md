@@ -104,6 +104,7 @@ Se ha visto:
 - Conectar contenedor con filesystem (para mantener la data de la base de datos)
 - Schemas
 - Modelos
+- Custom Pipes
 - DTOs y sus extensiones
 - Respaldar a Github
 - Uso de modelos en diferentes módulos
