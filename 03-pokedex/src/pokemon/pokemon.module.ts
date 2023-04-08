@@ -21,5 +21,9 @@ import { Pokemon, PokemonSchema } from './entities/pokemon.entity';
       },
     ]),
   ],
+
+  // Para poder inyectar en seed.service.ts una variable de tipo Model<Pokemon> tenemos que exportar
+  // el MongooseModule
+  exports: [MongooseModule],
 })
 export class PokemonModule {}
