@@ -23,19 +23,35 @@ export class SeedService {
   ) {}
 
   async executeSeed() {
+    // Borramos los datos antes de volver a generarlos para evitar clave duplicada.
+    // Esto es lo mismo que: DELETE FROM POKEMONS;
+    // Sin WHERE
+    await this.pokemonModel.deleteMany({});
+
     const { data } = await this.axios.get<PokeResponse>(
       'https://pokeapi.co/api/v2/pokemon?limit=3',
     );
 
-    data.results.forEach(async ({ name, url }) => {
+    // Forma 1 de resolver el problema de insertar de forma simultanea:
+    // Generar promesas y luego resolverlas todas a la vez.
+    const insertPromisesArray = [];
+
+    data.results.forEach(({ name, url }) => {
       const segments = url.split('/');
       const no = +segments[segments.length - 2];
 
       // No usamos pokemon.service.ts sino el create que proporciona mongoose, ya que es
       // la dependencia que hemos inyectado.
       // Problema: se hacen las inserciones de 1 en 1. Muy lento. Se debe hacer simultaneamente.
-      await this.pokemonModel.create({ name, no });
+      //await this.pokemonModel.create({ name, no });
+      //
+      // La promesa se guarda (no ha terminado)
+      insertPromisesArray.push(this.pokemonModel.create({ name, no }));
     });
+
+    // Ahora que tengo todas mis promesas guardadas, las resuelvo a la vez.
+    // Problema: guardamos muchas veces en el array insertPromisesArray.
+    await Promise.all(insertPromisesArray);
 
     return 'Seed executed!';
   }
