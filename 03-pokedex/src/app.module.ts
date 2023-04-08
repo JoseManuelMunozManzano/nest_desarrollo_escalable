@@ -4,6 +4,7 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { MongooseModule } from '@nestjs/mongoose';
 
 import { PokemonModule } from './pokemon/pokemon.module';
+import { CommonModule } from './common/common.module';
 
 @Module({
   // Para cargar contenido estático se ha creado la carpeta public en el raiz del proyecto.
@@ -21,6 +22,7 @@ import { PokemonModule } from './pokemon/pokemon.module';
     // Nos creamos la referencia a nuestra BD. Luego lo haremos con variables de entorno.
     MongooseModule.forRoot('mongodb://localhost:27018/nest-pokemon'),
     PokemonModule,
+    CommonModule,
   ],
 })
 export class AppModule {}

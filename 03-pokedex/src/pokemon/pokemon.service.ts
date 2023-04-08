@@ -85,11 +85,13 @@ export class PokemonService {
     }
   }
 
+  // Es siempre un mongoId
   async remove(id: string) {
-    const pokemon = await this.findOne(id);
-    // Este es un delete típico, pero en el siguiente git veremos como usar un CustomPipes para eliminar
-    // donde queremos que nos envíen un mongoId
-    await pokemon.deleteOne();
+    // Con una sola consulta se busca y se borra.
+    // Problema: ahora mismo si es un mongoId correcto, pero que no existe en nuestra BD devuelve un 200.
+    // Queremos resolver el problema pero evitar una doble consulta (una de buscar y otra de eliminar)
+    const result = this.pokemonModel.findByIdAndDelete(id);
+    return result;
   }
 
   // Excepciones no controladas

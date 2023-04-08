@@ -12,6 +12,7 @@ import {
 import { PokemonService } from './pokemon.service';
 import { CreatePokemonDto } from './dto/create-pokemon.dto';
 import { UpdatePokemonDto } from './dto/update-pokemon.dto';
+import { ParseMongoIdPipe } from 'src/common/pipes/parse-mongo-id.pipe';
 
 // La url debe contener /api/v2
 // No es bueno indicar en el @Controler /api/v2/pokemon, porque si tuviéramos unos 10 endpoints tendríamos que hacer
@@ -48,8 +49,14 @@ export class PokemonController {
     return this.pokemonService.update(term, updatePokemonDto);
   }
 
+  // Vamos a asegurarnos de que se envía un mongoId usando un CustomPipe.
+  // No existe ningún ParseMongoIdPipe, así que lo crearemos nosotros.
+  // Como no tiene nada que ver con un pokemon, sino que se podría usar en cualquier sitio,
+  // vamos a crearlo en el módulo common (de comunes)
+  // Creamos el módulo common con el comando: nest g mo common
+  // Para crear el pipe usamos el comando: nest g pi common/pipes parseMongoId --no-spec
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  remove(@Param('id', ParseMongoIdPipe) id: string) {
     return this.pokemonService.remove(id);
   }
 }
