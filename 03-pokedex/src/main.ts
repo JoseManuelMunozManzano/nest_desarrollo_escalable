@@ -17,10 +17,10 @@ async function bootstrap() {
       // Tiene pros y contras.
       // Como pros, es que es fácil de validar la data de los DTO porque ya vienen como queremos.
       // Como contras, hay que procesar la información, lo que consume más memoria.
-      transform: true,
-      transformOptions: {
-        enableImplicitConversion: true,
-      },
+      // transform: true,
+      // transformOptions: {
+      //   enableImplicitConversion: true,
+      // },
     }),
   );
 
