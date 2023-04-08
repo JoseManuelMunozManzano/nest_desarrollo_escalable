@@ -5,21 +5,23 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 
-import axios, { AxiosInstance } from 'axios';
-
 import { Pokemon } from 'src/pokemon/entities/pokemon.entity';
 import { PokeResponse } from './interfaces/poke-response.interface';
+import { AxiosAdapter } from 'src/common/adapters/axios.adapter';
 
 @Injectable()
 export class SeedService {
-  // Luego se implementará usando el patrón adaptador y un custom provider para poder sustituir axios por request o
-  // fetch API o cualquier paquete que nos sirva para generar peticiones http.
-  // Así no tendremos aquí esta dependencia.
-  private readonly axios: AxiosInstance = axios;
+  // Custom Provider. La idea es poder cambiar axios por fetch o por otro fácilmente.
+  // Un Custom Provider utiliza el patrón Adaptador.
+  // Vamos a crear un adaptador que va a envolver axios para desacoplar esta dependencia de aquí.
+  // Este custom provider lo vamos a crear dentro de la carpeta common (en adapters), porque puede ser que en otros
+  // módulos también necesitemos hacer peticiones http, y entonces también usaremos este custom provider.
+  // Es un provider porque va a poder inyectarse.
 
   constructor(
     @InjectModel(Pokemon.name)
     private readonly pokemonModel: Model<Pokemon>,
+    private readonly http: AxiosAdapter,
   ) {}
 
   async executeSeed() {
@@ -28,7 +30,7 @@ export class SeedService {
     // Sin WHERE
     await this.pokemonModel.deleteMany({});
 
-    const { data } = await this.axios.get<PokeResponse>(
+    const data = await this.http.get<PokeResponse>(
       'https://pokeapi.co/api/v2/pokemon?limit=650',
     );
 

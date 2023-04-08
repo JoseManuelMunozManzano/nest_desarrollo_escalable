@@ -6,6 +6,7 @@ import { Module } from '@nestjs/common';
 import { PokemonModule } from 'src/pokemon/pokemon.module';
 import { SeedService } from './seed.service';
 import { SeedController } from './seed.controller';
+import { CommonModule } from 'src/common/common.module';
 
 @Module({
   controllers: [SeedController],
@@ -14,6 +15,8 @@ import { SeedController } from './seed.controller';
   // Para poder inyectar en seed.service.ts una variable de tipo Model<Pokemon> tenemos que importar
   // el PokemonModule, el cual está exportando MongooseModel.
   // En la consola Nest se verá: SeedModule dependencies initialized
-  imports: [PokemonModule],
+  //
+  // También importamos CommonModule, porque queremos usar el adaptador axios.adapter.ts
+  imports: [PokemonModule, CommonModule],
 })
 export class SeedModule {}
