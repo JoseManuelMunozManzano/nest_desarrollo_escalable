@@ -1,0 +1,9 @@
+# Contiene archivos que no queremos que se copien.
+# Queremos hacer nosotros el build, por eso no copiamos el directorio dist/
+dist/
+# Vamos a hacer las instalaciones en el contenedor.
+node_modules/
+
+# No los copio porque no me sirven para nada.
+.gitignore
+.git/

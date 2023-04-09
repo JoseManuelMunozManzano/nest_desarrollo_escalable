@@ -1,0 +1,49 @@
+version: '3'
+
+services:
+  # Servicio de la app que depende de la BD. Si la BD no se levanta, entonces este servicio tampoco.
+  pokedexapp:
+    depends_on:
+      - db
+    # La construcción. El context indica, con ., que se basa en la situación física de nuestro fichero
+    # docker-compose.prod.yaml y el archivo de dockerfile será nuestro Dockerfile.
+    build:
+      context: .
+      dockerfile: Dockerfile
+    # Indicamos el nombre de la imagen que vamos a utilizar.
+    image: pokedex-docker
+    container_name: pokedexapp
+    restart: always # reiniciar el contenedor si se detiene
+    # Por defecto usará lo que indique .env
+    ports:
+      - '${PORT}:${PORT}'
+    # working_dir: /var/www/pokedex
+    # Variables de entorno, también cogidas del fichero .env
+    environment:
+      MONGODB: ${MONGODB}
+      PORT: ${PORT}
+      DEFAULT_LIMIT: ${DEFAULT_LIMIT}
+    # Relación entre nuestra carpeta de filesystem y la carpeta de docker donde irá la aplicación.
+    # Esto no suele hacerse.
+    #volumes:
+    #  - ./:/var/www/pokedex
+
+  # Servicio de BD.
+  db:
+    image: mongo:5
+    # Este nombre es muy importante.
+    container_name: mongo-poke
+    # Reiniciar el contenedor si se detiene.
+    restart: always
+    # Mi puerto : puerto en Docker
+    ports:
+      - 27018:27017
+    environment:
+      # La BD que necesita la imagen para que funcione.
+      MONGODB_DATABASE: nest-pokemon
+    # Si se hacen inserciones y se borra el contenedor se pierde la información de la BD.
+    # La queremos persistente y eso se consigue usando volúmenes.
+    # Un volumen es una carpeta de mi ordenador donde se guardará la información de BD de Docker. La imagen de Docker
+    # trabaja con ese filesystem.
+    volumes:
+      - ./mongo:/data/db
