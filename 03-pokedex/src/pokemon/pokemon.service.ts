@@ -20,7 +20,9 @@ export class PokemonService {
   constructor(
     @InjectModel(Pokemon.name)
     private readonly pokemonModel: Model<Pokemon>,
-  ) {}
+  ) {
+    console.log(process.env.DEFAULT_LIMIT);
+  }
 
   // Las inserciones en la BD siempre son asíncronas.
   async create(createPokemonDto: CreatePokemonDto) {
@@ -38,7 +40,16 @@ export class PokemonService {
 
   findAll(paginationDto: PaginationDto) {
     // Se indican valores por defecto al limite y al offset si estos no se informaron.
-    const { limit = 10, offset = 0 } = paginationDto;
+    // Se utilizan las variables de entorno.
+    // POSIBLE PROBLEMA: Si a alguien se le olvidó poner en el fichero .env, o configurada al desplegar la app,
+    // esta variabe de entorno, tendremos undefined.
+    // Se va a resolver este posible problema de dos formas:
+    // 1. Usando un Configuration Loader, que suele ser lo suficiente en casi todos los casos. Si no tenemos declarada
+    //    la variable de entorno tendremos valores por defecto. Ver carpeta config, archivo app.config.ts
+    //    Para hacerlo funcionar necesitaremos usar el Configuration Service.
+    // 2. Usando un Validation Schema, que es lo más estricto, en el sentido de que si no tenemos configurada la
+    //    variable de entorno dará errores y no se levantará la aplicación.
+    const { limit = +process.env.DEFAULT_LIMIT, offset = 0 } = paginationDto;
     // Para ordenar de manera ascendente se indica el valor 1.
     // Para que no salga un campo se indica el signo -
     return this.pokemonModel

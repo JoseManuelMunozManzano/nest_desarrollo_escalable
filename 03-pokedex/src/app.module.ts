@@ -7,6 +7,7 @@ import { ConfigModule } from '@nestjs/config';
 import { PokemonModule } from './pokemon/pokemon.module';
 import { CommonModule } from './common/common.module';
 import { SeedModule } from './seed/seed.module';
+import { EnvConfiguration } from './config/app.config';
 
 @Module({
   // Para cargar contenido estático se ha creado la carpeta public en el raiz del proyecto.
@@ -17,7 +18,12 @@ import { SeedModule } from './seed/seed.module';
   imports: [
     // La posición es importante. Para las variables de entorno, poner al principio. Así evitamos
     // usar una variable de entorno sin que las hayamos cargado primero.
-    ConfigModule.forRoot(),
+    //
+    // Indicar que el Configuration Module nos ofrece un servicio que nos va a permitir hacer la inyección de
+    // dependencias de las variables de entorno entre otras cosas (ver pokemon.service.ts y app.config.ts)
+    ConfigModule.forRoot({
+      load: [EnvConfiguration],
+    }),
 
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'public'),
