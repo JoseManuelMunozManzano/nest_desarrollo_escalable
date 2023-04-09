@@ -50,6 +50,6 @@ export class AppModule {
   //
   // NOTA: Las variables de entorno, por defecto, siempre son string
   constructor() {
-    console.log(process.env);
+    //console.log(process.env);
   }
 }

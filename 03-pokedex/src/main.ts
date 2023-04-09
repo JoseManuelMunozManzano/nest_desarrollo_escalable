@@ -1,9 +1,14 @@
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { AppModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  // Utilizando ConfigurationService para obtener el puerto.
+  const configService = app.get(ConfigService);
+  const PORT = configService.get<number>('port');
 
   // En vez de indicar la url /api/v2 en pokemon.controller.ts lo hacemos aquí, a nivel de aplicación.
   app.setGlobalPrefix('api/v2');
@@ -24,6 +29,8 @@ async function bootstrap() {
     }),
   );
 
-  await app.listen(3000);
+  await app.listen(PORT, () => {
+    console.log(`App running on port ${PORT}`);
+  });
 }
 bootstrap();

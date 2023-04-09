@@ -4,6 +4,7 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, isValidObjectId } from 'mongoose';
 import { Pokemon } from './entities/pokemon.entity';
@@ -14,14 +15,25 @@ import { PaginationDto } from '../common/dto/pagination.dto';
 
 @Injectable()
 export class PokemonService {
+  private defaultLimit: number;
+
   // Inyección de dependencias del modelo, haciendo referencia a nuestra entity Pokemon.
   // El modelo por si solo no es inyectable porque no es un Provider, de ahí que se use el decorador
   // @InjectModel con el nombre de ese modelo.
+  //
+  // Inyectamos el ConfigurationService.
   constructor(
     @InjectModel(Pokemon.name)
     private readonly pokemonModel: Model<Pokemon>,
+    private readonly configService: ConfigService,
   ) {
-    console.log(process.env.DEFAULT_LIMIT);
+    //console.log(process.env.DEFAULT_LIMIT);
+
+    // Usando configService
+    // Si no lo tiene, con getOrThrow lanzamos un error
+    //console.log(configService.getOrThrow('no_existe'));
+    // Indicar que nos devuelve el valor como un número, y así lo indicamos en el genérico.
+    this.defaultLimit = configService.get<number>('defaultLimit');
   }
 
   // Las inserciones en la BD siempre son asíncronas.
@@ -49,7 +61,7 @@ export class PokemonService {
     //    Para hacerlo funcionar necesitaremos usar el Configuration Service.
     // 2. Usando un Validation Schema, que es lo más estricto, en el sentido de que si no tenemos configurada la
     //    variable de entorno dará errores y no se levantará la aplicación.
-    const { limit = +process.env.DEFAULT_LIMIT, offset = 0 } = paginationDto;
+    const { limit = this.defaultLimit, offset = 0 } = paginationDto;
     // Para ordenar de manera ascendente se indica el valor 1.
     // Para que no salga un campo se indica el signo -
     return this.pokemonModel

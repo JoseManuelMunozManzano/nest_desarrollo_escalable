@@ -10,7 +10,7 @@ export const EnvConfiguration = () => ({
   // Entonces SI que debería haber un error que fuera atrapado de una mejor manera.
   mongodb: process.env.MONGODB,
   port: process.env.PORT || 3002,
-  default_limit: process.env.DEFAULT_LIMIT || 7,
+  defaultLimit: process.env.DEFAULT_LIMIT || 7,
 });
 
 // En teoría esta configuración es más que suficiente para la mayor parte de las apps.
