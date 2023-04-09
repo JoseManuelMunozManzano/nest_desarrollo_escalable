@@ -8,6 +8,7 @@ import { PokemonModule } from './pokemon/pokemon.module';
 import { CommonModule } from './common/common.module';
 import { SeedModule } from './seed/seed.module';
 import { EnvConfiguration } from './config/app.config';
+import { JoiValidationSchema } from './config/joi.validation';
 
 @Module({
   // Para cargar contenido estático se ha creado la carpeta public en el raiz del proyecto.
@@ -21,8 +22,11 @@ import { EnvConfiguration } from './config/app.config';
     //
     // Indicar que el Configuration Module nos ofrece un servicio que nos va a permitir hacer la inyección de
     // dependencias de las variables de entorno entre otras cosas (ver pokemon.service.ts y app.config.ts)
+    //
+    // El load y el ValidationSchema pueden trabajar juntos aunque en principio en nuestro ejemplo hacen lo mismo.
     ConfigModule.forRoot({
       load: [EnvConfiguration],
+      validationSchema: JoiValidationSchema,
     }),
 
     ServeStaticModule.forRoot({

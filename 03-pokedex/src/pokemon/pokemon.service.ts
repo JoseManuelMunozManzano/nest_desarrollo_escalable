@@ -61,6 +61,7 @@ export class PokemonService {
     //    Para hacerlo funcionar necesitaremos usar el Configuration Service.
     // 2. Usando un Validation Schema, que es lo más estricto, en el sentido de que si no tenemos configurada la
     //    variable de entorno dará errores y no se levantará la aplicación.
+    //    Ver carpeta config, archivo joi.validation.ts
     const { limit = this.defaultLimit, offset = 0 } = paginationDto;
     // Para ordenar de manera ascendente se indica el valor 1.
     // Para que no salga un campo se indica el signo -
