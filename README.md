@@ -184,3 +184,25 @@ Heroku redeploy sin cambios:
 git commit --allow-empty -m "Trigger Heroku deploy"
 git push heroku <master|main>
 ```
+
+### 04-teslo-shop
+
+Proyecto creado con:
+
+```
+nest new 04-teslo-shop
+```
+
+Se ha visto:
+
+- TypeORM
+- Postgres
+- CRUD
+- Constrains
+- Validaciones
+- Búsquedas
+- Paginaciones
+- DTOs
+- Entities
+- Decoradores de TypeORM para entidades
+- Métodos BeforeInsert, BeforeUpdate
