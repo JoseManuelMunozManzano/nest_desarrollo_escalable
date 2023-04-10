@@ -1,0 +1,18 @@
+# Para levantar docker: docker-compose up -d
+version: '3'
+
+services:
+  db:
+    image: postgres:14.3
+    restart: always
+    ports:
+      - '5432:5432'
+    environment:
+      # docker-compose puede ver el archivo .env (sin hacer nada) y coger las variables de entorno
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    container_name: teslodb
+    volumes:
+      # conectamos nuestra carpeta postgres local con Docker en la ruta /var/lib/postgresql/data
+      # para no perder los datos
+      - ./postgres:/var/lib/postgresql/data
