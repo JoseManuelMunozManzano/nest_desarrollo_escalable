@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ProductsModule } from './products/products.module';
 
 // Para conectar Nest a la BD de tipo relacional ver la siguiente página:
 // https://docs.nestjs.com/techniques/database
@@ -28,6 +29,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       // En Producción se suelen hacer procesos de migraciones cuando cambia un archivo.
       synchronize: true,
     }),
+    ProductsModule,
   ],
 })
 export class AppModule {}
