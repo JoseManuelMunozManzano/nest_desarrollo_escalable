@@ -14,4 +14,41 @@ export class Product {
     unique: true,
   })
   title: string;
+
+  @Column('numeric', {
+    // Valor por defecto
+    default: 0,
+  })
+  price: number;
+
+  @Column({
+    // Otra forma de indicar el tipo del campo
+    type: 'text',
+    nullable: true,
+  })
+  description: string;
+
+  // Para tener urls friendly y obtener el producto
+  // unique crea índices de forma automática
+  @Column('text', {
+    unique: true,
+  })
+  slug: string;
+
+  @Column('int', {
+    default: 0,
+  })
+  stock: number;
+
+  // Ejemplo de arreglo
+  @Column('text', {
+    array: true,
+  })
+  sizes: string[];
+
+  @Column('text')
+  gender: string;
+
+  // Falta campo tags
+  // Falta campo images
 }
