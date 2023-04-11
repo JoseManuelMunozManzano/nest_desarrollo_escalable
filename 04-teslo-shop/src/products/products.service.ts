@@ -1,12 +1,21 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { Product } from './entities/product.entity';
 import { Repository } from 'typeorm';
+import e from 'express';
 
 @Injectable()
 export class ProductsService {
+  // Para ver mejor los errores usaremos el logger de Nest
+  private readonly logger = new Logger('ProductsService');
+
   // El patrón repositorio ya viene definido por defecto en Nest. Antes había que hacer una clase independiente.
   // Para inyectar un repositorio se usa el decorador @InjectRepository e inyectaremos aquí nuestra entidad entre
   // paréntesis.
@@ -27,7 +36,6 @@ export class ProductsService {
     // a la vez en BD, con las transacciones.
     //
     // Usando ahora el patrón repositorio con un try catch para atrapar los posibles errores.
-    // Nos falta tratar los errores, por ejemplo una clave duplicada nos da status 500.
     // También nos falta tratar el campo slug. Si viene lo usamos, pero si no (es opcional) tendremos que
     // generarlo porque para la entity es unique.
     try {
@@ -38,8 +46,8 @@ export class ProductsService {
       // Regresamos el producto.
       return product;
     } catch (error) {
-      console.log(error);
-      throw new InternalServerErrorException('Ayuda');
+      // Tratando los errores de una mejor forma. Con logs y método privado dedicado.
+      this.handleDBExceptions(error);
     }
   }
 
@@ -57,5 +65,20 @@ export class ProductsService {
 
   remove(id: number) {
     return `This action removes a #${id} product`;
+  }
+
+  // error de tipo any porque quiero manejar cualquier tipo de error que venga.
+  private handleDBExceptions(error: any) {
+    //console.log(error);
+    if (error.code === '23505') {
+      this.logger.error(error);
+      throw new BadRequestException(error.detail);
+    }
+
+    // Usando el logger. Se ve en consola de Nest
+    this.logger.error(error);
+    throw new InternalServerErrorException(
+      'Unexpected error, check server logs',
+    );
   }
 }
