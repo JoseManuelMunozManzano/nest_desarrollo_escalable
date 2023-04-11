@@ -15,7 +15,8 @@ export class Product {
   })
   title: string;
 
-  @Column('numeric', {
+  // Si no ponemos float no es numérico
+  @Column('float', {
     // Valor por defecto
     default: 0,
   })
