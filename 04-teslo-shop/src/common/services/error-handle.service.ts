@@ -1,6 +1,5 @@
 import {
   BadRequestException,
-  Inject,
   Injectable,
   InternalServerErrorException,
   Logger,
@@ -10,7 +9,7 @@ import {
 export class ErrorHandleService {
   private readonly logger: Logger;
 
-  constructor(@Inject() private serviceName: string) {
+  constructor(private serviceName: string) {
     this.logger = new Logger(serviceName);
   }
 
