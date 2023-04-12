@@ -7,7 +7,7 @@ import { BeforeInsert, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 export class Product {
   // Vamos a usar 'uuid' que me da más control que un número incremental ('increment').
   @PrimaryGeneratedColumn('uuid')
-  id: number;
+  id: string;
 
   // Se pueden añadir configuraciones a @Column. En este ejemplo se ha indicado que title es un text y es unique.
   @Column('text', {
