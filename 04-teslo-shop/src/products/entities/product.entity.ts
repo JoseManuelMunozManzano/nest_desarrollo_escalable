@@ -1,7 +1,7 @@
 // Esto es lo que va a buscar TypeORM para crear la referencia en la BD.
 // Es una representación del objeto Producto en la BD. Al final es una tabla.
 // Pero hay que decorarlo con @Entity
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { BeforeInsert, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class Product {
@@ -52,4 +52,22 @@ export class Product {
 
   // Falta campo tags
   // Falta campo images
+
+  // Cada vez que vayamos a insertar, antes vamos a realizar estas acciones.
+  // Sería como un trigger.
+  @BeforeInsert()
+  checkSlugInsert() {
+    // Si no nos viene el slug en el dto (es optional) lo vamos a crear nosotros.
+    // El slug va a ser lo mismo que el title, que es obligatorio.
+    if (!this.slug) {
+      this.slug = this.title;
+    }
+
+    this.slug = this.slug
+      .toLocaleLowerCase()
+      .replaceAll(' ', '_')
+      .replaceAll("'", '');
+  }
+
+  // @BeforeUpdate()
 }
