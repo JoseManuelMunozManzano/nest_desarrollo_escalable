@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateProductDto } from './dto/create-product.dto';
@@ -33,9 +33,24 @@ export class ProductsService {
     // a la vez en BD, con las transacciones.
     //
     // Usando ahora el patrón repositorio con un try catch para atrapar los posibles errores.
-    // También nos falta tratar el campo slug. Si viene lo usamos, pero si no (es opcional) tendremos que
-    // generarlo porque para la entity es unique.
     try {
+      // Si no nos viene el slug en el dto (es optional) lo vamos a crear nosotros.
+      // Primero de una forma más bien fea. Aquí queda mal. Luego lo vamos a hacer en un procedimiento que
+      // se va a ejecutar antes de que se inserte en la BD.
+      // El slug va a ser lo mismo que el title.
+      // Para que funcione el método replaceAll() he ido a tsconfig.json y puesto el target a es2021.
+      if (!createProductDto.slug) {
+        createProductDto.slug = createProductDto.title
+          .toLocaleLowerCase()
+          .replaceAll(' ', '_')
+          .replaceAll("'", '');
+      } else {
+        createProductDto.slug = createProductDto.slug
+          .toLocaleLowerCase()
+          .replaceAll(' ', '_')
+          .replaceAll("'", '');
+      }
+
       // Esto solo crea nuestra instancia de producto ya con un id. Todavía no hemos grabado en BD.
       const product = this.productRepository.create(createProductDto);
       // Para impactarlo en BD.
