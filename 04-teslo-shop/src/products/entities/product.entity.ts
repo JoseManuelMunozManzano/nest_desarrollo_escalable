@@ -1,7 +1,13 @@
 // Esto es lo que va a buscar TypeORM para crear la referencia en la BD.
 // Es una representación del objeto Producto en la BD. Al final es una tabla.
 // Pero hay que decorarlo con @Entity
-import { BeforeInsert, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  BeforeInsert,
+  BeforeUpdate,
+  Column,
+  Entity,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity()
 export class Product {
@@ -69,5 +75,17 @@ export class Product {
       .replaceAll("'", '');
   }
 
-  // @BeforeUpdate()
+  // Uso de @BeforeUpdate
+  @BeforeUpdate()
+  checkSlugUpdate() {
+    // Si nos viene a blancos le ponemos el título
+    if (!this.slug) {
+      this.slug = this.title;
+    }
+
+    this.slug = this.slug
+      .toLocaleLowerCase()
+      .replaceAll(' ', '_')
+      .replaceAll("'", '');
+  }
 }
