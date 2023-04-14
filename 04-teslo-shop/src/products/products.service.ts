@@ -88,8 +88,30 @@ export class ProductsService {
     return product;
   }
 
-  update(id: number, updateProductDto: UpdateProductDto) {
-    return `This action updates a #${id} product`;
+  // En la actualización todos los campos son opcionales pero hay ciertas restricciones.
+  // Vamos a recibir como id un uuid.
+  async update(id: string, updateProductDto: UpdateProductDto) {
+    // preload indica lo siguiente: Busca un producto por id y además carga todas las propiedades que estén
+    // en updateProductDto.
+    // Esto no actualiza, prepara para la actualización.
+    const product = await this.productRepository.preload({
+      id: id,
+      ...updateProductDto,
+    });
+
+    if (!product)
+      throw new NotFoundException(`Product with id: ${id} not found`);
+
+    // Ahora si se actualiza el producto.
+    // PROBLEMA: Si cambio el título a uno existente dará error 500 por clave duplicada. Para ello se indica
+    //   el try catch.
+    //   Para el slug vamos a usar BeforeUpdate en product.entity.ts
+    try {
+      await this.productRepository.save(product);
+      return product;
+    } catch (error) {
+      this.errorHandler.errorHandle(error);
+    }
   }
 
   async remove(id: string) {
