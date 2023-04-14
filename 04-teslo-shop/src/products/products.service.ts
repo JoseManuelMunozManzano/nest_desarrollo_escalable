@@ -57,7 +57,7 @@ export class ProductsService {
     });
   }
 
-  // Vamos a buscar por uuid, por slug o por título (este último en el siguiente commit usando QueryBuilder).
+  // Vamos a buscar por uuid, por slug o por título.
   // Instalamos: yarn add uuid
   //             yarn add -D @types/uuid
   // porque no lo teníamos y viene con una función propia para evaluarlo llamada validate,
@@ -68,7 +68,20 @@ export class ProductsService {
     if (isUUID(term)) {
       product = await this.productRepository.findOneBy({ id: term });
     } else {
-      product = await this.productRepository.findOneBy({ slug: term });
+      // Para buscar por el título, es más complicado. Es más complejo de lo que los métodos por defecto permiten.
+      // En este caso concreto se podría hacer con findOneBy y añadir un where, pero se va a explicar QueryBuilder.
+      // Es una función que permite crear queries, pero con la seguridad de que se están escapando caracteres
+      // especiales para evitar inyección SQL.
+      const queryBuilder = this.productRepository.createQueryBuilder();
+      // Los argumentos se indican en el where y se definen en el segundo parámetro.
+      // Se indica getOne() porque puede que el término a buscar exista como título y como slug. De los 2
+      // encontrados quiero que me devuelva solo uno.
+      product = await queryBuilder
+        .where('UPPER(title) = :title or slug = :slug', {
+          title: term.toLocaleUpperCase(),
+          slug: term.toLocaleLowerCase(),
+        })
+        .getOne();
     }
 
     if (!product) throw new NotFoundException(`Product with ${term} not found`);
