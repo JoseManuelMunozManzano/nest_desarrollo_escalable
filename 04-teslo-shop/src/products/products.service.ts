@@ -6,6 +6,7 @@ import { UpdateProductDto } from './dto/update-product.dto';
 import { Product } from './entities/product.entity';
 import { ErrorHandleService } from 'src/common/services/error-handle.service';
 import { PaginationDto } from '../common/dtos/pagination.dto';
+import { validate as isUUID } from 'uuid';
 
 @Injectable()
 export class ProductsService {
@@ -56,10 +57,21 @@ export class ProductsService {
     });
   }
 
-  async findOne(id: string) {
-    const product = await this.productRepository.findOneBy({ id });
-    if (!product)
-      throw new NotFoundException(`Product with id ${id} not found`);
+  // Vamos a buscar por uuid, por slug o por título (este último en el siguiente commit usando QueryBuilder).
+  // Instalamos: yarn add uuid
+  //             yarn add -D @types/uuid
+  // porque no lo teníamos y viene con una función propia para evaluarlo llamada validate,
+  // aunque también se puede evaluar con un regex.
+  async findOne(term: string) {
+    let product: Product;
+
+    if (isUUID(term)) {
+      product = await this.productRepository.findOneBy({ id: term });
+    } else {
+      product = await this.productRepository.findOneBy({ slug: term });
+    }
+
+    if (!product) throw new NotFoundException(`Product with ${term} not found`);
     return product;
   }
 
