@@ -44,4 +44,10 @@ export class CreateProductDto {
   // Se esperan estos valores
   @IsIn(['men', 'women', 'kid', 'unisex'])
   gender: string;
+
+  @IsString({ each: true })
+  @IsArray()
+  // Como hay un default value lo ponemos como opcional
+  @IsOptional()
+  tags?: string[];
 }

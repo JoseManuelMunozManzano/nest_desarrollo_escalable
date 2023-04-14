@@ -56,7 +56,13 @@ export class Product {
   @Column('text')
   gender: string;
 
-  // Falta campo tags
+  // Ejemplo de petición real de añadir un campo nuevo tags
+  @Column('text', {
+    array: true,
+    default: [],
+  })
+  tags: string[];
+
   // Falta campo images
 
   // Cada vez que vayamos a insertar, antes vamos a realizar estas acciones.
