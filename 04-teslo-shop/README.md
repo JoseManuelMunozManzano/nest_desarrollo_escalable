@@ -14,7 +14,7 @@ nest new 04-teslo-shop
 2. Instalar dependencias
 
 ```
-  yarn install
+yarn install
 ```
 
 3. Clonar el archivo `.env.template` y renombrarlo a `.env`
@@ -28,7 +28,7 @@ docker-compose up -d
 6. Levantar el modo desarrollo
 
 ```
-  yarn start:dev
+yarn start:dev
 ```
 
 Se ha visto:
@@ -44,3 +44,13 @@ Se ha visto:
 - Entities
 - Decoradores de TypeORM para entidades
 - Métodos BeforeInsert, BeforeUpdate
+- Relaciones
+  - De uno a muchos
+  - Muchos a uno
+- Query Runner
+- Query Builder
+- Transacciones
+- Commits y Rollbacks
+- Renombrar tablas
+- Creación de un SEED
+- Aplanar resultados
