@@ -6,8 +6,12 @@ import {
   BeforeUpdate,
   Column,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+
+// Importándolo del archivo de barril index.ts
+import { ProductImage } from './';
 
 @Entity()
 export class Product {
@@ -63,7 +67,14 @@ export class Product {
   })
   tags: string[];
 
-  // Falta campo images
+  // images
+  // Estableciendo la relación.
+  // Un producto puede tener muchas imágenes.
+  // Se indica que regresa un ProductImage y como la otra tabla se relaciona con esta.
+  @OneToMany(() => ProductImage, (productImage) => productImage.product, {
+    cascade: true,
+  })
+  images?: ProductImage;
 
   // Cada vez que vayamos a insertar, antes vamos a realizar estas acciones.
   // Sería como un trigger.
