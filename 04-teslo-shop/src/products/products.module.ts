@@ -5,7 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ProductsService } from './products.service';
 import { ProductsController } from './products.controller';
 
-import { Product } from './entities/product.entity';
+import { Product, ProductImage } from './entities';
 
 @Module({
   controllers: [ProductsController],
@@ -14,7 +14,7 @@ import { Product } from './entities/product.entity';
   imports: [
     // forFeature() porque nos permite registrar las entidades en el modulo donde lo configuremos.
     // Se definen todas las entidades que este módulo está definiendo.
-    TypeOrmModule.forFeature([Product]),
+    TypeOrmModule.forFeature([Product, ProductImage]),
   ],
 })
 export class ProductsModule {}
