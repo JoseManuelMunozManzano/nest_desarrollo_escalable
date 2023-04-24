@@ -50,4 +50,9 @@ export class CreateProductDto {
   // Como hay un default value lo ponemos como opcional
   @IsOptional()
   tags?: string[];
+
+  @IsString({ each: true })
+  @IsArray()
+  @IsOptional()
+  images?: string[];
 }

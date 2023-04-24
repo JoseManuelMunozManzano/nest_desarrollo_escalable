@@ -1,12 +1,13 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { CreateProductDto } from './dto/create-product.dto';
-import { UpdateProductDto } from './dto/update-product.dto';
-import { Product } from './entities/product.entity';
-import { ErrorHandleService } from 'src/common/services/error-handle.service';
-import { PaginationDto } from '../common/dtos/pagination.dto';
 import { validate as isUUID } from 'uuid';
+
+import { PaginationDto } from '../common/dtos/pagination.dto';
+import { UpdateProductDto } from './dto/update-product.dto';
+import { CreateProductDto } from './dto/create-product.dto';
+import { ErrorHandleService } from 'src/common/services/error-handle.service';
+import { ProductImage, Product } from './entities';
 
 @Injectable()
 export class ProductsService {
@@ -21,6 +22,10 @@ export class ProductsService {
   constructor(
     @InjectRepository(Product)
     private readonly productRepository: Repository<Product>,
+
+    // Para crear instancias de las imágenes inyectamos ProductImage
+    @InjectRepository(ProductImage)
+    private readonly productImageRepository: Repository<ProductImage>,
   ) {}
 
   // No olvidar poner estos métodos con async await, ya que las interacciones con BD son asíncronas.
@@ -36,12 +41,27 @@ export class ProductsService {
     //
     // Usando ahora el patrón repositorio con un try catch para atrapar los posibles errores.
     try {
+      const { images = [], ...productDetails } = createProductDto;
+
       // Esto solo crea nuestra instancia de producto ya con un id. Todavía no hemos grabado en BD.
-      const product = this.productRepository.create(createProductDto);
+      const product = this.productRepository.create({
+        ...productDetails,
+        // Como se está creando la imagen dentro de producto, el campo de relación, product, no hace
+        // falta indicarlo, lo infiere TypeORM de forma automática.
+        images: images.map((image) =>
+          this.productImageRepository.create({ url: image }),
+        ),
+      });
+
       // Para impactarlo en BD.
+      // Salva tanto el producto como las imágenes.
       await this.productRepository.save(product);
       // Regresamos el producto.
-      return product;
+
+      // Se indica así el return porque si no esto luce un poco diferente, se ve en Postman como un arreglo
+      // con url e id, y de esta forma muestra solo la url, como se manda el Post en Postman, con el objetivo
+      // de que el usuario que consuma la API no sepa como está construido.
+      return { ...product, images };
     } catch (error) {
       // Tratando los errores de una mejor forma. Con logs centralizados en un servicio
       this.errorHandler.errorHandle(error);
@@ -97,6 +117,8 @@ export class ProductsService {
     const product = await this.productRepository.preload({
       id: id,
       ...updateProductDto,
+      // Esto es para arreglar el error de manera temporal.
+      images: [],
     });
 
     if (!product)
