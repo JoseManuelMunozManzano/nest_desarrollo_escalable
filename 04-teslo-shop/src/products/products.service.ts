@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { validate as isUUID } from 'uuid';
 
 import { PaginationDto } from '../common/dtos/pagination.dto';
@@ -26,6 +26,10 @@ export class ProductsService {
     // Para crear instancias de las imágenes inyectamos ProductImage
     @InjectRepository(ProductImage)
     private readonly productImageRepository: Repository<ProductImage>,
+
+    // Para el queryRunner, porque necesitamos saber la cadena de conexión que estamos usando, sabe el
+    // usuario de BD que uso y tiene la misma configuración que nuestro repositorio.
+    private readonly dataSource: DataSource,
   ) {}
 
   // No olvidar poner estos métodos con async await, ya que las interacciones con BD son asíncronas.
@@ -136,27 +140,76 @@ export class ProductsService {
   // En la actualización todos los campos son opcionales pero hay ciertas restricciones.
   // Vamos a recibir como id un uuid.
   async update(id: string, updateProductDto: UpdateProductDto) {
+    // toUpdate es la data que se va a actulizar sin las imágenes.
+    const { images, ...toUpdate } = updateProductDto;
+
     // preload indica lo siguiente: Busca un producto por id y además carga todas las propiedades que estén
     // en updateProductDto.
     // Esto no actualiza, prepara para la actualización.
     const product = await this.productRepository.preload({
-      id: id,
-      ...updateProductDto,
-      // Esto es para arreglar el error de manera temporal.
-      images: [],
+      id,
+      ...toUpdate,
     });
 
     if (!product)
       throw new NotFoundException(`Product with id: ${id} not found`);
+
+    // Al actualizar, la parte de las imágenes realmente son dos consultas, la eliminación y la actualización
+    // del producto, y ambas tienen que salir bien. Si alguna falla queremos revertir los cambios y mandar
+    // un error al usuario indicándole que pasó.
+    // Estas dos interacciones con la BD la vamos a hacer con el Query Runner.
+    // https://orkhan.gitbook.io/typeorm/docs/insert-query-builder
+    // Con Query Runner creamos transacciones.
+    // Indicamos una serie de consultas. Si todas salen bien indicaremos que se impacte en BD.
+    // Si una sale mal se puede hacer Rollback.
+    // Luego desechamos el queryRunner.
+
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
 
     // Ahora si se actualiza el producto.
     // PROBLEMA: Si cambio el título a uno existente dará error 500 por clave duplicada. Para ello se indica
     //   el try catch.
     //   Para el slug vamos a usar BeforeUpdate en product.entity.ts
     try {
-      await this.productRepository.save(product);
-      return product;
+      // Lo que se hace en este if no impacta en la BD hasta que no hagamos commit.
+      if (images) {
+        // Si hay imágenes las borramos.
+        // El product que aparece es el Entity Target.
+        await queryRunner.manager.delete(ProductImage, { product: { id } });
+
+        // Insertamos las nuevas imágenes
+        product.images = images.map((image) =>
+          this.productImageRepository.create({ url: image }),
+        );
+      } else {
+        // Si no hay imágenes que actualizar recuperamos las que tenga.
+        // Notar que el return sería: return product;
+        // Faltaría luego formatear las imágenes recupearadas.
+        //
+        // product.images = await this.productImageRepository.findBy({
+        //   product: { id },
+        // });
+      }
+
+      // Sigue sin ser commit. No se impacta todavía en BD
+      await queryRunner.manager.save(product);
+
+      // Ahora si impacta en BD
+      await queryRunner.commitTransaction();
+
+      // Desechando el queryRunner
+      await queryRunner.release();
+
+      return this.findOnePlain(id);
+      //return product;
     } catch (error) {
+      // Rollback
+      // Notar que se creó el queryRunner fuera del try catch para poder usar el rollback aquí.
+      await queryRunner.rollbackTransaction();
+      await queryRunner.release();
+
       this.errorHandler.errorHandle(error);
     }
   }
