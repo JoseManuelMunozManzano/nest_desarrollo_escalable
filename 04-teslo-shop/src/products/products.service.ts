@@ -70,11 +70,22 @@ export class ProductsService {
 
   async findAll(paginationDto: PaginationDto) {
     const { limit = 10, offset = 0 } = paginationDto;
-    return await this.productRepository.find({
+
+    const products = await this.productRepository.find({
       take: limit,
       skip: offset,
-      // TODO: relaciones
+
+      // Para mostrar las relaciones. En este caso images a true para que las muestre.
+      relations: {
+        images: true,
+      },
     });
+
+    // Aplanando las images para mostrar solo la url, no el objeto con el id.
+    return products.map((product) => ({
+      ...product,
+      images: product.images.map((img) => img.url),
+    }));
   }
 
   // Vamos a buscar por uuid, por slug o por título.
@@ -92,7 +103,9 @@ export class ProductsService {
       // En este caso concreto se podría hacer con findOneBy y añadir un where, pero se va a explicar QueryBuilder.
       // Es una función que permite crear queries, pero con la seguridad de que se están escapando caracteres
       // especiales para evitar inyección SQL.
-      const queryBuilder = this.productRepository.createQueryBuilder();
+      //
+      // Se indica el alias prod para trabajar con el en leftJoindAndSelect
+      const queryBuilder = this.productRepository.createQueryBuilder('prod');
       // Los argumentos se indican en el where y se definen en el segundo parámetro.
       // Se indica getOne() porque puede que el término a buscar exista como título y como slug. De los 2
       // encontrados quiero que me devuelva solo uno.
@@ -101,11 +114,23 @@ export class ProductsService {
           title: term.toLocaleUpperCase(),
           slug: term.toLocaleLowerCase(),
         })
+        // Para obtener las imágenes de la relación usando un QueryBuilder.
+        // Se indica el campo y un alias por si se quisiera seguir haciendo joins.
+        .leftJoinAndSelect('prod.images', 'prodImages')
         .getOne();
     }
 
     if (!product) throw new NotFoundException(`Product with ${term} not found`);
     return product;
+  }
+
+  // Método para aplanar
+  async findOnePlain(term: string) {
+    const { images = [], ...rest } = await this.findOne(term);
+    return {
+      ...rest,
+      images: images.map((image) => image.url),
+    };
   }
 
   // En la actualización todos los campos son opcionales pero hay ciertas restricciones.

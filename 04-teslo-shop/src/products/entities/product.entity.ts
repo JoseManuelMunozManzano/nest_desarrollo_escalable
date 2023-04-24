@@ -73,6 +73,9 @@ export class Product {
   // Se indica que regresa un ProductImage y como la otra tabla se relaciona con esta.
   @OneToMany(() => ProductImage, (productImage) => productImage.product, {
     cascade: true,
+    // Para en products.service.ts, método findOne() pueda cargar también las imágenes.
+    // Sin esto no carga la relación.
+    eager: true,
   })
   images?: ProductImage[];
 
