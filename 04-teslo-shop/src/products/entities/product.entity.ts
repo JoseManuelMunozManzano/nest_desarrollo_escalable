@@ -74,7 +74,7 @@ export class Product {
   @OneToMany(() => ProductImage, (productImage) => productImage.product, {
     cascade: true,
   })
-  images?: ProductImage;
+  images?: ProductImage[];
 
   // Cada vez que vayamos a insertar, antes vamos a realizar estas acciones.
   // Sería como un trigger.
