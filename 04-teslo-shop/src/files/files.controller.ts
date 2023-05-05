@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   Controller,
   FileTypeValidator,
   MaxFileSizeValidator,
@@ -10,8 +9,9 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 
+import { diskStorage } from 'multer';
+
 import { FilesService } from './files.service';
-import { fileFilter } from './helpers/fileFilter.helper';
 
 @Controller('files')
 export class FilesController {
@@ -38,6 +38,11 @@ export class FilesController {
   // DE NUEVO, NO QUEREMOS SUBIR IMAGENES EN EL MISMO SERVIDOR DONDE SE ENCUENTRA EL CODIGO DE LA APLICACION.
   // USAR UN SERVICIO DE TERCEROS.
   //
+  // Vamos a dejar la imagen en un archivo de la carpeta static/uploads
+  // Para ello se usa en el FileInterceptor la propiedad storage y se usa la función diskStorage() indicando
+  // el destino.
+  // Esto crea la imagen en ese directorio, con un nombre único, pero sin extensión.
+  //
   // Vamos a validar que realmente el usuario sube una imagen. Esto puede implementarse en files o también en common.
   // Para este caso, como solo lo vamos a utilizar aquí, lo vamos a dejar en files. Se crea un módulo helpers dentro
   // del módulo files, que contendrá funciones específicas de este módulo.
@@ -48,7 +53,13 @@ export class FilesController {
   // y que el tamaño máximo es de 1024x1024 y 3 Mb. Si no se envía fichero da un error de File is required, y
   // si el tipo es distinto de los indicados también da una excepción Validation failed.
   @Post('product')
-  @UseInterceptors(FileInterceptor('file'))
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: diskStorage({
+        destination: './static/uploads',
+      }),
+    }),
+  )
   uploadProductImage(
     @UploadedFile(
       new ParseFilePipe({
