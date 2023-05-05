@@ -1,6 +1,9 @@
 import {
   BadRequestException,
   Controller,
+  FileTypeValidator,
+  MaxFileSizeValidator,
+  ParseFilePipe,
   Post,
   UploadedFile,
   UseInterceptors,
@@ -40,14 +43,23 @@ export class FilesController {
   // del módulo files, que contendrá funciones específicas de este módulo.
   // Y se usará en el FileInterceptor (mirar la firma para ver qué se pide y que se devuelve, que es void)
   // mandando la referencia, es decir, sin los paréntesis. El FileInterceptor ejecutará la función.
+  //
+  // Se incluye un ejemplo con ParseFilePipe que sustituye a fileFilter. Se indica el tipo de archivos que espera
+  // y que el tamaño máximo es de 1024x1024 y 3 Mb. Si no se envía fichero da un error de File is required, y
+  // si el tipo es distinto de los indicados también da una excepción Validation failed.
   @Post('product')
-  @UseInterceptors(FileInterceptor('file', { fileFilter: fileFilter }))
-  uploadProductImage(@UploadedFile() file: Express.Multer.File) {
-    // Si no se acepta el archivo aquí SI lanzamos la excepción
-    if (!file) {
-      throw new BadRequestException('Make sure that the file is an image');
-    }
-
+  @UseInterceptors(FileInterceptor('file'))
+  uploadProductImage(
+    @UploadedFile(
+      new ParseFilePipe({
+        validators: [
+          new FileTypeValidator({ fileType: '.(png|jpeg|jpg|gif)' }),
+          new MaxFileSizeValidator({ maxSize: 1024 * 1024 * 3 }),
+        ],
+      }),
+    )
+    file: Express.Multer.File,
+  ) {
     // TODO Cambiar el nombre porque si no, si existiese, reemplazaría la imagen por esta.
     return { fileName: file.originalname };
   }

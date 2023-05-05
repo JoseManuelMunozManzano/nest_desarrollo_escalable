@@ -216,3 +216,4 @@ Se ha visto:
 - Renombrar tablas
 - Creación de un SEED
 - Aplanar resultados
+- Carga de archivos a nuestro backend
