@@ -214,6 +214,13 @@ export class ProductsService {
     }
   }
 
+  // Tal y como está el delete provoca un error de violación de foreign_key sobre product_image.
+  // Para evitar el error y a la vez evitar tocar este método (queremos que quede así) podemos hacer 2 cosas:
+  //  1. Crear una transacción, borrar las imágenes y borrar el producto. Con esta opción tenemos un gran
+  //     control.
+  //  2. Pero como product_image es una tabla simple, podemos hacer un delete en cascada. Cuando se borra
+  //     el producto, también se borrará de forma automática las imágenes relacionadas de product_image.
+  //     Ver product-image.entity.ts
   async remove(id: string) {
     const product = await this.findOne(id);
 

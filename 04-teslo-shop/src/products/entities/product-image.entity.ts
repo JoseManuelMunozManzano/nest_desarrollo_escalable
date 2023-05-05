@@ -17,6 +17,10 @@ export class ProductImage {
   // Relación entre ProductImage y Product
   // No es una columna nueva, es una relación.
   // Muchas imágenes pueden pertenecer a un solo producto.
-  @ManyToOne(() => Product, (product) => product.images)
+  //
+  // Se indica eliminación en cascada.
+  @ManyToOne(() => Product, (product) => product.images, {
+    onDelete: 'CASCADE',
+  })
   product: Product;
 }
