@@ -13,7 +13,14 @@ import {
 // Importándolo del archivo de barril index.ts
 import { ProductImage } from './';
 
-@Entity()
+// Como hay muchos productos, se cambia el nombre para que en BD el nombre de la tabla sea products y no product.
+// Si borramos las tablas para partir de cero, tenemos que echar abajo la ejecución, ir a Docker y borrar el
+// contenedor.
+// Ejecutamos de nuevo :docker-compose up -d
+// Y ejecutamos el proyecto: yarn start:dev
+// Con esto se regeneran las tablas de nuevo.
+// Y ejecutamos de nuevo la carga del SEED.
+@Entity({ name: 'products' })
 export class Product {
   // Vamos a usar 'uuid' que me da más control que un número incremental ('increment').
   @PrimaryGeneratedColumn('uuid')

@@ -3,7 +3,8 @@ import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 // Importándolo del archivo de barril index.ts
 import { Product } from './';
 
-@Entity()
+// Se recomienda el uso de snake_case
+@Entity({ name: 'product_images' })
 export class ProductImage {
   // Autoincremental.
   // Identificador único de las imágenes que se van subiendo.
