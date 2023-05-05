@@ -12,6 +12,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 
 import { FilesService } from './files.service';
+import { fileNamer } from './helpers/index';
 
 @Controller('files')
 export class FilesController {
@@ -38,7 +39,7 @@ export class FilesController {
   // DE NUEVO, NO QUEREMOS SUBIR IMAGENES EN EL MISMO SERVIDOR DONDE SE ENCUENTRA EL CODIGO DE LA APLICACION.
   // USAR UN SERVICIO DE TERCEROS.
   //
-  // Vamos a dejar la imagen en un archivo de la carpeta static/uploads
+  // Vamos a dejar la imagen en un archivo de la carpeta static/products
   // Para ello se usa en el FileInterceptor la propiedad storage y se usa la función diskStorage() indicando
   // el destino.
   // Esto crea la imagen en ese directorio, con un nombre único, pero sin extensión.
@@ -52,11 +53,15 @@ export class FilesController {
   // Se incluye un ejemplo con ParseFilePipe que sustituye a fileFilter. Se indica el tipo de archivos que espera
   // y que el tamaño máximo es de 1024x1024 y 3 Mb. Si no se envía fichero da un error de File is required, y
   // si el tipo es distinto de los indicados también da una excepción Validation failed.
+  //
+  // Para cambiar el nombre de la imagen usamos filename. Se ha hecho una función helper que devuelve el nuevo
+  // nombre. Pasamos su referencia.
   @Post('product')
   @UseInterceptors(
     FileInterceptor('file', {
       storage: diskStorage({
-        destination: './static/uploads',
+        destination: './static/products',
+        filename: fileNamer,
       }),
     }),
   )
@@ -71,7 +76,13 @@ export class FilesController {
     )
     file: Express.Multer.File,
   ) {
-    // TODO Cambiar el nombre porque si no, si existiese, reemplazaría la imagen por esta.
+    // Problema: Nadie desde fuera puede acceder a mi filesystem.
+    // Incluso aunque en este console.log se indique el path:
+    // path: 'static/products/c282102e-ac3f-45ed-8bfe-cb1b3f95da74.jpeg',
+    // No se puede llegar.
+    // Hay que servir el archivo de manera controlada o poner la carpeta de forma pública, visible a todo el mundo.
+    console.log(file);
+
     return { fileName: file.originalname };
   }
 }
