@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Controller,
   Post,
   UploadedFile,
@@ -7,6 +8,7 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 
 import { FilesService } from './files.service';
+import { fileFilter } from './helpers/fileFilter.helper';
 
 @Controller('files')
 export class FilesController {
@@ -32,9 +34,21 @@ export class FilesController {
   // variables de entorno...
   // DE NUEVO, NO QUEREMOS SUBIR IMAGENES EN EL MISMO SERVIDOR DONDE SE ENCUENTRA EL CODIGO DE LA APLICACION.
   // USAR UN SERVICIO DE TERCEROS.
+  //
+  // Vamos a validar que realmente el usuario sube una imagen. Esto puede implementarse en files o también en common.
+  // Para este caso, como solo lo vamos a utilizar aquí, lo vamos a dejar en files. Se crea un módulo helpers dentro
+  // del módulo files, que contendrá funciones específicas de este módulo.
+  // Y se usará en el FileInterceptor (mirar la firma para ver qué se pide y que se devuelve, que es void)
+  // mandando la referencia, es decir, sin los paréntesis. El FileInterceptor ejecutará la función.
   @Post('product')
-  @UseInterceptors(FileInterceptor('file'))
+  @UseInterceptors(FileInterceptor('file', { fileFilter: fileFilter }))
   uploadProductImage(@UploadedFile() file: Express.Multer.File) {
-    return file;
+    // Si no se acepta el archivo aquí SI lanzamos la excepción
+    if (!file) {
+      throw new BadRequestException('Make sure that the file is an image');
+    }
+
+    // TODO Cambiar el nombre porque si no, si existiese, reemplazaría la imagen por esta.
+    return { fileName: file.originalname };
   }
 }
