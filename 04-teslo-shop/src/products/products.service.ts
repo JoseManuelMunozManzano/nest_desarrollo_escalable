@@ -230,7 +230,7 @@ export class ProductsService {
   // Procedimiento destructivo para cuando estamos creando nuestra semilla de inserción.
   // Lo suyo es ejecutarlo solo en desarrollo y cuando aplique.
   // También se elimina en cascada la tabla product_image.
-  async deleteAllProduct() {
+  async deleteAllProducts() {
     const query = this.productRepository.createQueryBuilder('product');
 
     try {

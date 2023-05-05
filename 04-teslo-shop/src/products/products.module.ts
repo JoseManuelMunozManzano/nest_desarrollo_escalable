@@ -16,5 +16,12 @@ import { Product, ProductImage } from './entities';
     // Se definen todas las entidades que este módulo está definiendo.
     TypeOrmModule.forFeature([Product, ProductImage]),
   ],
+  // Recordar que se exporta lo que necesitemos.
+  exports: [
+    ProductsService,
+    // Es muy típico exportar también el módulo de TypeOrm en caso de que queramos trabajar con los dos
+    // repositorios de las dos entidades creadas (Product y ProductImage)
+    TypeOrmModule,
+  ],
 })
 export class ProductsModule {}
