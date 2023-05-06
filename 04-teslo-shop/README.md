@@ -25,7 +25,7 @@ yarn install
 docker-compose up -d
 ```
 
-5. Levantar el modo desarrollo
+6. Levantar el modo desarrollo
 
 ```
 yarn start:dev
