@@ -61,3 +61,15 @@ Se ha visto:
 - Creación de un SEED
 - Aplanar resultados
 - Carga de archivos a nuestro backend
+- Autenticación
+- Autorización
+- Json Web Tokens
+- Hash de contraseñas
+- Nest Passport
+- Módulos asíncronos
+- Protección de rutas
+- Custom Method Decorators
+- Custom Class Decorators
+- Custom Property Decorators
+- Enlazar usuarios con productos
+- Bearer Tokens
