@@ -17,11 +17,14 @@
 // Y se borra lo que no vamos a usar.
 
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import { FilesService } from './files.service';
 import { FilesController } from './files.controller';
 
 @Module({
   controllers: [FilesController],
   providers: [FilesService],
+  // Para poder usar ConfigService y tener acceso a las variables de entorno, importamos su módulo ConfigModule
+  imports: [ConfigModule],
 })
 export class FilesModule {}

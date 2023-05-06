@@ -21,10 +21,15 @@ import { diskStorage } from 'multer';
 
 import { FilesService } from './files.service';
 import { fileNamer } from './helpers/index';
+import { ConfigService } from '@nestjs/config';
 
 @Controller('files')
 export class FilesController {
-  constructor(private readonly filesService: FilesService) {}
+  constructor(
+    private readonly filesService: FilesService,
+    // Añadimos configService para tener acceso a las variables de entorno.
+    private readonly configService: ConfigService,
+  ) {}
 
   // Servir archivo de manera controlada
   // Regresamos la imagen!! Para ello usamos el decorador @Res que es la response de Nest.
@@ -131,7 +136,11 @@ export class FilesController {
     //
     //console.log(file);
 
-    const secureUrl = `${file.filename}`;
+    // Retornando el secureUrl verdadero usando variables de entorno.
+    // La idea es que me devuelva un path y al pulsar en el se muestre la imagen en el navegador.
+    const secureUrl = `${this.configService.get('HOST_API')}/files/product/${
+      file.filename
+    }`;
 
     return { secureUrl };
   }
