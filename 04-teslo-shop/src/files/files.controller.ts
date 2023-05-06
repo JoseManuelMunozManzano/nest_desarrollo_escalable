@@ -1,14 +1,22 @@
+import { createReadStream } from 'fs';
+
 import {
   Controller,
   FileTypeValidator,
+  Get,
+  Header,
   MaxFileSizeValidator,
+  Param,
   ParseFilePipe,
   Post,
+  Res,
+  StreamableFile,
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 
+import { Response } from 'express';
 import { diskStorage } from 'multer';
 
 import { FilesService } from './files.service';
@@ -17,6 +25,45 @@ import { fileNamer } from './helpers/index';
 @Controller('files')
 export class FilesController {
   constructor(private readonly filesService: FilesService) {}
+
+  // Servir archivo de manera controlada
+  // Regresamos la imagen!! Para ello usamos el decorador @Res que es la response de Nest.
+  //
+  // IMPORTANTE: Al usar el decorador @Rest() se rompe la funcionalidad de Nest en el método, es decir, indicamos
+  //  a Nest que NO queremos que tome el control de la respuesta porque la vamos a emitir nosotros manualmente.
+  //  También nos saltamos interceptores que tengamos definidos de manera global y restricciones que usa Nest,
+  //  pasos del ciclo de vida de Nest. MUCHO CUIDADO AL USARLO.
+  //
+  // NOTA: Indicamos res de tipo Response en vez de Express.Response porque con este último TS no nos da la ayuda.
+  @Get('product/:imageName')
+  findProductImage(
+    @Res() res: Response,
+    @Param('imageName') imageName: string,
+  ) {
+    const path = this.filesService.getStaticProductImage(imageName);
+
+    // EJEMPLO de respuesta manual en vez de un return.
+    // res.status(403).json({
+    //   ok: false,
+    //   path,
+    // });
+
+    // Enviamos el archivo. Si da un error no va a continuar.
+    res.sendFile(path);
+  }
+
+  // Otra forma de mostrar la imagen sin usar @Res, y por tanto siguiendo el ciclo de vida de Nest.
+  // Se usa el decorador @Header porque sin el, al ingresar el secureUrl en el navegador intenta descargar la imagen
+  // en vez de solo mostrarla.
+  @Get('productNoRes/:imageName')
+  @Header('Content-Type', 'image/jpeg')
+  findProductImageWithoutRes(@Param('imageName') imageName: string) {
+    const stream = createReadStream(
+      this.filesService.getStaticProductImage(imageName),
+    );
+
+    return new StreamableFile(stream);
+  }
 
   // Petición POST para subir archivos.
   // Se indica product porque queremos indicar que las imágenes son de productos.
@@ -81,8 +128,11 @@ export class FilesController {
     // path: 'static/products/c282102e-ac3f-45ed-8bfe-cb1b3f95da74.jpeg',
     // No se puede llegar.
     // Hay que servir el archivo de manera controlada o poner la carpeta de forma pública, visible a todo el mundo.
-    console.log(file);
+    //
+    //console.log(file);
 
-    return { fileName: file.originalname };
+    const secureUrl = `${file.filename}`;
+
+    return { secureUrl };
   }
 }
