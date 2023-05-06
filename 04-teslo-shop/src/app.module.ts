@@ -1,6 +1,10 @@
+import { join } from 'path';
+
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ServeStaticModule } from '@nestjs/serve-static';
+
 import { ProductsModule } from './products/products.module';
 import { CommonModule } from './common/common.module';
 import { SeedModule } from './seed/seed.module';
@@ -33,6 +37,17 @@ import { FilesModule } from './files/files.module';
       // En Producción se suelen hacer procesos de migraciones cuando cambia un archivo.
       synchronize: true,
     }),
+
+    // Otras formas de desplegar los archivos usando una carpeta public.
+    // En este ejemplo suponemos que las imágenes son contenido estático, es decir, son las que son.
+    // Son recursos públicos que no van a cambiar. Los usuarios deben conocer el path para poder verlas.
+    // Instalación necesaria: yarn add @nestjs/serve-static
+    // Y la siguiente configuración.
+    // Con esto podemos ir al navegador y escribir: http://localhost:3001/products/1473809-00-A_1_2000.jpg
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'public'),
+    }),
+
     ProductsModule,
     CommonModule,
     SeedModule,
