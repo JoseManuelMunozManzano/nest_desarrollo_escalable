@@ -14,7 +14,8 @@ import { FilesModule } from './files/files.module';
 @Module({
   imports: [
     // Para poder usar variables de entorno (.env) en Nest
-    ConfigModule.forRoot(),
+    // Se modifica para poder usarlo de manera global
+    ConfigModule.forRoot({ isGlobal: true }),
     // Configuración del TypeOrm usando Postgres
     // NOTA: Se usa forFeature() cuando queremos expandir funcionalidades.
     TypeOrmModule.forRoot({
