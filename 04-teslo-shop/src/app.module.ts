@@ -41,9 +41,13 @@ import { FilesModule } from './files/files.module';
     // Otras formas de desplegar los archivos usando una carpeta public.
     // En este ejemplo suponemos que las imágenes son contenido estático, es decir, son las que son.
     // Son recursos públicos que no van a cambiar. Los usuarios deben conocer el path para poder verlas.
+    // Ventaja: Apenas hay que hacer nada salvo una instalación y una pequeña configuración.
     // Instalación necesaria: yarn add @nestjs/serve-static
     // Y la siguiente configuración.
     // Con esto podemos ir al navegador y escribir: http://localhost:3001/products/1473809-00-A_1_2000.jpg
+    //
+    // NOTA: Para el proyecto se quitan las imágenes de la ruta public y se llevan a la carpeta static/products.
+    //   Hacemos uso del controlador y tenemos un control total de quien puede ver la imágenes (autorización)
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'public'),
     }),
