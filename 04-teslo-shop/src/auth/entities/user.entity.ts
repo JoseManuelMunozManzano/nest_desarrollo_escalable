@@ -21,7 +21,9 @@ export class User {
   fullName: string;
 
   // No se van a eliminar usuarios físicamente de la BD.
-  @Column('bool')
+  @Column('bool', {
+    default: true,
+  })
   isActive: boolean;
 
   @Column('text', {

@@ -13,7 +13,8 @@ export class ErrorHandleService {
     this.logger = new Logger(serviceName);
   }
 
-  public errorHandle(error: any) {
+  // Se añade que esta función devuelve never para asegurarnos de no añadir un return por error.
+  public errorHandle(error: any): never {
     if (error.code === '23505') {
       this.logger.error(`${error} - ${error.detail}`);
       throw new BadRequestException(error.detail);
