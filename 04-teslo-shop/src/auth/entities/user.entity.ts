@@ -14,7 +14,10 @@ export class User {
   })
   email: string;
 
-  @Column('text')
+  // select es para indicar si la columna se selecciona en un QueryBuilder y operaciones find.
+  @Column('text', {
+    select: false,
+  })
   password: string;
 
   @Column('text')

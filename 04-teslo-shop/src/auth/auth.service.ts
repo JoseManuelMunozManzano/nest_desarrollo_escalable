@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
@@ -6,9 +6,9 @@ import { Repository } from 'typeorm';
 // Si el día de mañana queremos cambiar bcrypt por otro paquete solo tendríamos que cambiar el nombre en el from.
 import * as bcrypt from 'bcrypt';
 
-import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './entities/user.entity';
 import { ErrorHandleService } from 'src/common/services/error-handle.service';
+import { CreateUserDto, LoginUserDto } from './dto';
 
 @Injectable()
 export class AuthService {
@@ -51,5 +51,34 @@ export class AuthService {
     } catch (error) {
       this.errorHandler.errorHandle(error);
     }
+  }
+
+  async login(loginUserDto: LoginUserDto) {
+    const { password, email } = loginUserDto;
+
+    // Buscamos el usuario por su email.
+    //const user = await this.userRepository.findOneBy({ email });
+    //
+    // Jamás debemos regresar el password.
+    // Para ello en nuestro user.entity.ts indicamos select en false. Con eso, en findOneBy no aparece el password.
+    // Pero ahora tenemos el problema de que necesito el password almacenado en la BD del usuario.
+    // Solo la necesito en el login.
+    // Por eso sustituimos el findOneBy por este findOne con un where.
+    // Con esto solo recibimos del usuario el email y el password, que es lo que realmente necesito para el login.
+    const user = await this.userRepository.findOne({
+      where: { email },
+      select: { email: true, password: true },
+    });
+
+    if (!user)
+      throw new UnauthorizedException('Credentials are not valid (email)');
+
+    // Si existe el usuario comparo la contraseña del request con la que tengo en BD.
+    if (!bcrypt.compareSync(password, user.password))
+      // Solo para fines visuales. JAMAS hay que indicar cual es el dato erroneo.
+      throw new UnauthorizedException('Credentials are not valid (password)');
+
+    return user;
+    // TODO: Retornar el JWT de acceso
   }
 }
