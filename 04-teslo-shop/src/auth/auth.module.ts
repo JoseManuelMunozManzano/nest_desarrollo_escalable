@@ -1,6 +1,7 @@
 // Creadp con el mandato CLI
 //  nest g res auth --no-spec
 import { Module } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
@@ -36,15 +37,29 @@ import { User } from './entities/user.entity';
     // necesitamos esa respuesta antes de configurar mi módulo.
     // Por ahora se va a usar register, pero lo vamos a cambiar por registerAsync.
     PassportModule.register({ defaultStrategy: 'jwt' }),
-    // Configuración del módulo jwt.
+    // Configuración del módulo jwt de manera asíncrona.
+    // Cambia un poco la configuración con respecto a no asíncrono.
     // Se indica el secret, el cual no debería conocer nadie (Mucho cuidado en github)
     //    Se usan variables de entorno.
     // El tiempo de expiración.
-    // PROBLEMA: Podría no estar todavía el valor en la variable de entorno. Hay que hacerlo asíncrono.
-    JwtModule.register({
-      secret: process.env.JWT_SECRET,
-      signOptions: {
-        expiresIn: '2d',
+    JwtModule.registerAsync({
+      // NOTA: Para fines educativos, importaremos ConfigModule e inyectaremos ConfigService para poder
+      // usar variables de entorno, aunque no haría falta (ver línea comentada que hace uso de process.env)
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      // useFactory es la función que se va a mandar a llamar cuando se intente registrar el módulo
+      // de manera asíncrona.
+      // NOTA: useClass se usa mucho para la parte de testing
+      useFactory: (configService: ConfigService) => {
+        // console.log('JWT secret', configService.get('JWT_SECRET'));
+        // console.log('JWT SECRET', process.env.JWT_SECRET);
+        return {
+          // secret: process.env.JWT_SECRET,
+          secret: configService.get('JWT_SECRET'),
+          signOptions: {
+            expiresIn: '2d',
+          },
+        };
       },
     }),
   ],
