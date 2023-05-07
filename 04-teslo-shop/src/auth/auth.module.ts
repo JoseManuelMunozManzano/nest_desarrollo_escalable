@@ -9,6 +9,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { User } from './entities/user.entity';
+import { JwtStrategy } from './strategies/jwt.strategy';
 
 // Necesitamos generar un JWT, que será el que los usuarios almacenan en su dispositivo.
 // Cada vez que quieran acceder a un endpoint que requiera autenticación van a proporcionarnoslo.
@@ -28,8 +29,11 @@ import { User } from './entities/user.entity';
 
 @Module({
   controllers: [AuthController],
-  providers: [AuthService],
+  // Como la estrategia Jwt es un provider, lo ponemos aquí.
+  providers: [AuthService, JwtStrategy],
   imports: [
+    // Esto no hace falta porque se importó de manera global ConfigModule en app.module.ts
+    // ConfigModule,
     TypeOrmModule.forFeature([User]),
     // La estrategia que vamos a usar (jwt).
     // Se puede usar registerAsync para asegurarnos de que las variables de entorno están cargadas antes de
@@ -65,6 +69,7 @@ import { User } from './entities/user.entity';
   ],
   // Todavía no haría falta, pero sabemos que vamos a usar el modelo User y la configuración que hemos hecho aquí
   // en otros módulos.
-  exports: [TypeOrmModule],
+  // Para poder exportar nuestra estrategia de Jwt a otros módulos, por si queremos validar el token manualmente...
+  exports: [TypeOrmModule, JwtStrategy, PassportModule, JwtModule],
 })
 export class AuthModule {}
