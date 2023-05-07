@@ -2,7 +2,13 @@
 // y nuestra aplicación.
 //
 // Este fichero se ha renombrado a user.entity.ts (se llamaba auth.entity.ts)
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  BeforeInsert,
+  BeforeUpdate,
+  Column,
+  Entity,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity('users')
 export class User {
@@ -34,4 +40,17 @@ export class User {
     default: ['user'],
   })
   roles: string[];
+
+  // Esto sería parecido a triggers en bases de datos. Antes de insertar y de actualizar hazme cosas.
+  // Esta medida de seguridad se añade porque se podría dar de alta un email en mayúsculas y luego buscarlo
+  // en minúsculas. Ahora lo primero que hace con el email es ponerlo en minúsculas.
+  @BeforeInsert()
+  checkFieldsBeforeInsert() {
+    this.email = this.email.toLowerCase().trim();
+  }
+
+  @BeforeUpdate()
+  checkFieldsBeforeUpdate() {
+    this.checkFieldsBeforeInsert();
+  }
 }
