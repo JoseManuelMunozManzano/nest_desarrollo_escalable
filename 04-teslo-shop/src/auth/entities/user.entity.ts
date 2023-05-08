@@ -44,6 +44,7 @@ export class User {
   // Esto sería parecido a triggers en bases de datos. Antes de insertar y de actualizar hazme cosas.
   // Esta medida de seguridad se añade porque se podría dar de alta un email en mayúsculas y luego buscarlo
   // en minúsculas. Ahora lo primero que hace con el email es ponerlo en minúsculas.
+  // NOTA: Ya no buscamos por email sino por id, pero se mantiene este código por fines educativos.
   @BeforeInsert()
   checkFieldsBeforeInsert() {
     this.email = this.email.toLowerCase().trim();

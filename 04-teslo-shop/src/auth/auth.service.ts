@@ -50,7 +50,7 @@ export class AuthService {
       // Esta es la forma cutre. Más adelante lo vamos a hacer de otra forma.
       delete user.password;
 
-      return { ...user, token: this.getJwtToken({ email: user.email }) };
+      return { ...user, token: this.getJwtToken({ id: user.id }) };
     } catch (error) {
       this.errorHandler.errorHandle(error);
     }
@@ -67,10 +67,11 @@ export class AuthService {
     // Pero ahora tenemos el problema de que necesito el password almacenado en la BD del usuario.
     // Solo la necesito en el login.
     // Por eso sustituimos el findOneBy por este findOne con un where.
-    // Con esto solo recibimos del usuario el email y el password, que es lo que realmente necesito para el login.
+    // Con esto solo recibimos del usuario el id, el email y el password, que es lo que realmente necesito
+    // para el login.
     const user = await this.userRepository.findOne({
       where: { email },
-      select: { email: true, password: true },
+      select: { email: true, id: true, password: true },
     });
 
     if (!user)
@@ -81,7 +82,7 @@ export class AuthService {
       // Solo para fines visuales. JAMAS hay que indicar cual es el dato erroneo.
       throw new UnauthorizedException('Credentials are not valid (password)');
 
-    return { ...user, token: this.getJwtToken({ email: user.email }) };
+    return { ...user, token: this.getJwtToken({ id: user.id }) };
   }
 
   private getJwtToken(payload: JwtPayload) {

@@ -20,7 +20,7 @@ import { JwtPayload } from '../interfaces/jwt-payload.interface';
 // La estrategia indica si el token es válido.
 //
 // En nuestro caso vamos a usar una estrategia personalizada que nos indicará si el usuario está activo,
-// usando el mail, y si no lo está, que el token sea válido nos dará igual porque no se podrá autenticar.
+// usando el id, y si no lo está, que el token sea válido nos dará igual porque no se podrá autenticar.
 
 // Para poder usar esta clase, indicar que los Strategies son Providers, de ahí que indicamos el decorador
 // @Injectable y ya podemos enlazarlo en el módulo que queramos (ver auth.module.ts).
@@ -42,9 +42,9 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
   // Esta función se ejecutará automáticamente cuando el token es válido y no ha expirado.
   async validate(payload: JwtPayload): Promise<User> {
-    const { email } = payload;
+    const { id } = payload;
 
-    const user = await this.userRepository.findOneBy({ email });
+    const user = await this.userRepository.findOneBy({ id });
 
     if (!user) throw new UnauthorizedException('Token not valid');
 
