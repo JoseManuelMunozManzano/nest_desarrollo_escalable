@@ -1,5 +1,5 @@
 // Recordar que los controladores son los que escuchan los requests y emiten una respuesta.
-import { Controller, Post, Body, Get, UseGuards } from '@nestjs/common';
+import { Controller, Post, Body, Get, UseGuards, Req } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 
 import { AuthService } from './auth.service';
@@ -30,9 +30,16 @@ export class AuthController {
   // Una vez hecho esto, en Postman con este Get: http://localhost:3001/api/auth/private
   // el resultado será 401, Unauthorized SI NO TENEMOS TOKEN O NO TENEMOS IMPLEMENTADO AUTHORIZATION
   // CON BEARER TOKEN O EL USUARIO ESTA INACTIVO.
+  //
+  // Indicar que en la request tenemos el usuario
+  // porque en nuestra estrategia jwt.strategy.ts devolvimos el usuario. Ya lo tenemos y usamos @Req para usarlo.
+  // Pero tenemos que tener el decorador @UserGuards(AuthGuard()) porque sino no va a funcionar.
+  // Para esto es mejor hacer un custom property decorator.
   @Get('private')
   @UseGuards(AuthGuard())
-  testingPrivateRoute() {
+  testingPrivateRoute(@Req() request: Express.Request) {
+    console.log({ user: request.user });
+
     return {
       ok: true,
       mesage: 'Hola Mundo Private',
