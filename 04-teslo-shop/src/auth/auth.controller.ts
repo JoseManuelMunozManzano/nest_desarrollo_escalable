@@ -4,6 +4,8 @@ import { AuthGuard } from '@nestjs/passport';
 
 import { AuthService } from './auth.service';
 import { CreateUserDto, LoginUserDto } from './dto';
+import { GetUser } from './decorators/get-user.decorator';
+import { User } from './entities/user.entity';
 
 @Controller('auth')
 export class AuthController {
@@ -34,15 +36,19 @@ export class AuthController {
   // Indicar que en la request tenemos el usuario
   // porque en nuestra estrategia jwt.strategy.ts devolvimos el usuario. Ya lo tenemos y usamos @Req para usarlo.
   // Pero tenemos que tener el decorador @UserGuards(AuthGuard()) porque sino no va a funcionar.
-  // Para esto es mejor hacer un custom property decorator.
+  // Para esto es mejor hacer un custom property decorator. Ver get-user.decorator.ts
   @Get('private')
   @UseGuards(AuthGuard())
-  testingPrivateRoute(@Req() request: Express.Request) {
-    console.log({ user: request.user });
+  testingPrivateRoute(
+    /* @Req() request: Express.Request */
+    @GetUser() user: User,
+  ) {
+    //console.log({ user: request.user });
 
     return {
       ok: true,
       mesage: 'Hola Mundo Private',
+      user,
     };
   }
 }
