@@ -16,6 +16,8 @@ import { GetUser, RawHeaders } from './decorators';
 import { User } from './entities/user.entity';
 import { IncomingHttpHeaders } from 'http';
 import { UserRoleGuard } from './guards/user-role/user-role.guard';
+import { RoleProtected } from './decorators/role-protected.decorator';
+import { ValidRoles } from './interfaces';
 
 @Controller('auth')
 export class AuthController {
@@ -97,6 +99,25 @@ export class AuthController {
   @SetMetadata('roles', ['admin', 'super-user'])
   @UseGuards(AuthGuard(), UserRoleGuard)
   privateRoute2(@GetUser() user: User) {
+    return {
+      ok: true,
+      user,
+    };
+  }
+
+  // Creando el Custom Decorator (recomendado por el equipo de Nest), para indicar que este get
+  // necesita ciertos roles.
+  // Ver el custom decorator del fuente role-protected.decorator.ts
+  //
+  // PROBLEMA: Es muy fácil olvidarse de poner @RoleProtected y es muy fácil olvidarse de poner AuthGuard()
+  //    En ambos casos todos los usuarios independientemente del role pasarían.
+  //
+  // SOLUCION: Crear un único decorador que haga todo este trabajo (@RoleProtected y @UseGuards)
+  @Get('private3')
+  @RoleProtected(ValidRoles.superUser, ValidRoles.admin, ValidRoles.user)
+  // NOTA: AuthGuard es autenticación y UserRoleGuard es autorización.
+  @UseGuards(AuthGuard(), UserRoleGuard)
+  privateRoute3(@GetUser() user: User) {
     return {
       ok: true,
       user,

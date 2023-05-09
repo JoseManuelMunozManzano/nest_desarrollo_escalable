@@ -8,9 +8,10 @@ import {
   ForbiddenException,
   Injectable,
 } from '@nestjs/common';
-import { Observable, of } from 'rxjs';
+import { Observable } from 'rxjs';
 
 import { User } from 'src/auth/entities/user.entity';
+import { META_ROLES } from 'src/auth/decorators/role-protected.decorator';
 
 // Para que un guard sea válido tiene que implementar el método canActivate() que devolverá un booleano.
 // Si es true lo deja pasar y si es false no lo deja pasar y devuelve un 403 Forbidden.
@@ -29,7 +30,7 @@ export class UserRoleGuard implements CanActivate {
     context: ExecutionContext,
   ): boolean | Promise<boolean> | Observable<boolean> {
     const validRoles: string[] = this.reflector.get(
-      'roles',
+      META_ROLES,
       context.getHandler(),
     );
 
