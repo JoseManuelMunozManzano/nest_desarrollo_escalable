@@ -1,11 +1,19 @@
 // Recordar que los controladores son los que escuchan los requests y emiten una respuesta.
-import { Controller, Post, Body, Get, UseGuards, Req } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Get,
+  UseGuards,
+  Headers,
+} from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 
 import { AuthService } from './auth.service';
 import { CreateUserDto, LoginUserDto } from './dto';
-import { GetUser } from './decorators/get-user.decorator';
+import { GetUser, RawHeaders } from './decorators';
 import { User } from './entities/user.entity';
+import { IncomingHttpHeaders } from 'http';
 
 @Controller('auth')
 export class AuthController {
@@ -37,11 +45,21 @@ export class AuthController {
   // porque en nuestra estrategia jwt.strategy.ts devolvimos el usuario. Ya lo tenemos y usamos @Req para usarlo.
   // Pero tenemos que tener el decorador @UserGuards(AuthGuard()) porque sino no va a funcionar.
   // Para esto es mejor hacer un custom property decorator. Ver get-user.decorator.ts
+  //
+  // Vamos a hacer que GetUser reciba un argumento (si fuera más de uno se usaría un arreglo ['email' 'passord']
+  // por ejemplo), es decir, vamos a usar GetUser de las dos maneras, con argumentos y sin argumentos.
+  // Si no mandamos argumentos esperaríamos ver todo el usuario. Si le mandamos el email queremos solo el email.
   @Get('private')
   @UseGuards(AuthGuard())
   testingPrivateRoute(
     /* @Req() request: Express.Request */
     @GetUser() user: User,
+    @GetUser('email') userEmail: string,
+
+    // Hacemos otro custom property decorator para obtener el header del request. Es una práctica para aprender.
+    @RawHeaders() rawHeaders: string[],
+    // Indicar que para obtener los headers Nest nos ofrece ya un decorator.
+    @Headers() headers: IncomingHttpHeaders,
   ) {
     //console.log({ user: request.user });
 
@@ -49,6 +67,9 @@ export class AuthController {
       ok: true,
       mesage: 'Hola Mundo Private',
       user,
+      userEmail,
+      rawHeaders,
+      headers,
     };
   }
 }
