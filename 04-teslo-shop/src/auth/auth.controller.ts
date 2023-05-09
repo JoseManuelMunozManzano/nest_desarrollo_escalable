@@ -12,7 +12,7 @@ import { AuthGuard } from '@nestjs/passport';
 
 import { AuthService } from './auth.service';
 import { CreateUserDto, LoginUserDto } from './dto';
-import { GetUser, RawHeaders } from './decorators';
+import { Auth, GetUser, RawHeaders } from './decorators';
 import { User } from './entities/user.entity';
 import { IncomingHttpHeaders } from 'http';
 import { UserRoleGuard } from './guards/user-role/user-role.guard';
@@ -111,13 +111,25 @@ export class AuthController {
   //
   // PROBLEMA: Es muy fácil olvidarse de poner @RoleProtected y es muy fácil olvidarse de poner AuthGuard()
   //    En ambos casos todos los usuarios independientemente del role pasarían.
-  //
-  // SOLUCION: Crear un único decorador que haga todo este trabajo (@RoleProtected y @UseGuards)
   @Get('private3')
   @RoleProtected(ValidRoles.superUser, ValidRoles.admin, ValidRoles.user)
   // NOTA: AuthGuard es autenticación y UserRoleGuard es autorización.
   @UseGuards(AuthGuard(), UserRoleGuard)
   privateRoute3(@GetUser() user: User) {
+    return {
+      ok: true,
+      user,
+    };
+  }
+
+  // SOLUCION: Crear un único decorador que haga todo este trabajo (@RoleProtected y @UseGuards)
+  //    Vamos a crear un decorador basado en otros decoradores (@Auth())
+  //    Esto se llama Composición de Decoradores.
+  //    Ver: https://docs.nestjs.com/custom-decorators#decorator-composition
+  @Get('private4')
+  // NOTA: Si solo fuera admitido un role como admin, lo indicamos y ya.
+  @Auth(ValidRoles.admin)
+  privateRoute4(@GetUser() user: User) {
     return {
       ok: true,
       user,
