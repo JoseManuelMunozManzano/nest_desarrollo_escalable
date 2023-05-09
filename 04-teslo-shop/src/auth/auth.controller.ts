@@ -6,6 +6,7 @@ import {
   Get,
   UseGuards,
   Headers,
+  SetMetadata,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 
@@ -14,6 +15,7 @@ import { CreateUserDto, LoginUserDto } from './dto';
 import { GetUser, RawHeaders } from './decorators';
 import { User } from './entities/user.entity';
 import { IncomingHttpHeaders } from 'http';
+import { UserRoleGuard } from './guards/user-role/user-role.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -70,6 +72,34 @@ export class AuthController {
       userEmail,
       rawHeaders,
       headers,
+    };
+  }
+
+  // Vamos a crear un Custom Guard y un Custom Decorator que nos sirva para decorar que el get necesita
+  // ciertos roles, es decir, a nivel macro voy a decir que privateRoute2 necesita ciertos roles.
+  //
+  // Primero vamos a hacer esto de una manera fea y luego lo haremos de la manera recomendada por el equipo de Nest.
+  //
+  // La forma "fea" se hace con el decorador @SetMetadata() que nos sirve para incluir información extra al método
+  // o al controlador que quiero ejecutar.
+  // En este caso quiero que roles tenga un conjunto posible de valores.
+  // Para evaluar esta información se usa un Custom Guard que verá la data y, dependiendo del usuario y de los roles
+  // que están en la metadata, lo dejará o no pasar.
+  //
+  // Vemos que el custom guard se informa también en @UseGuards(), pero notar que es sin paréntesis.
+  // Se puede informar new UserRoleGuard() y crear una instancia, pero normalmente los vamos a informar aquí
+  // sin crear instancia, para que no cree una instancia por llamada, sino usar siempre la misma.
+  //
+  // Indicar que esta forma no le gusta a Nest porque en @SetMetadata es difícil equivocarse y poner otra cosa en
+  // vez de roles.
+  // Por eso desde Nest prefieren crear Custom Decorators.
+  @Get('private2')
+  @SetMetadata('roles', ['admin', 'super-user'])
+  @UseGuards(AuthGuard(), UserRoleGuard)
+  privateRoute2(@GetUser() user: User) {
+    return {
+      ok: true,
+      user,
     };
   }
 }
