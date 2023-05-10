@@ -17,7 +17,9 @@ export class SeedController {
   // El problema es que @Auth() usa AuthGuard() que está conectado a passport, y passport es un módulo.
   // Tenemos que exportar y hacer visible para todo el mundo nuestro módulo Auth. Ver auth.module.ts y seed.module.ts
   // Una vez hechas las exportaciones / importaciones, ya funciona correctamente.
-  @Auth(ValidRoles.admin)
+  //
+  // Se quita porque no tenemos usuarios.
+  //@Auth(ValidRoles.admin)
   executeSeed() {
     return this.seedService.runSeed();
   }
