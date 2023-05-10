@@ -6,8 +6,9 @@ import { validate as isUUID } from 'uuid';
 import { PaginationDto } from '../common/dtos/pagination.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { CreateProductDto } from './dto/create-product.dto';
-import { ErrorHandleService } from 'src/common/services/error-handle.service';
+import { ErrorHandleService } from '../common/services/error-handle.service';
 import { ProductImage, Product } from './entities';
+import { User } from '../auth/entities/user.entity';
 
 @Injectable()
 export class ProductsService {
@@ -33,7 +34,7 @@ export class ProductsService {
   ) {}
 
   // No olvidar poner estos métodos con async await, ya que las interacciones con BD son asíncronas.
-  async create(createProductDto: CreateProductDto) {
+  async create(createProductDto: CreateProductDto, user: User) {
     // Cómo uso mi entidad?
     // La primera forma es crear un nuevo producto
     // const producto = new Product();
@@ -55,6 +56,7 @@ export class ProductsService {
         images: images.map((image) =>
           this.productImageRepository.create({ url: image }),
         ),
+        user,
       });
 
       // Para impactarlo en BD.
@@ -139,7 +141,7 @@ export class ProductsService {
 
   // En la actualización todos los campos son opcionales pero hay ciertas restricciones.
   // Vamos a recibir como id un uuid.
-  async update(id: string, updateProductDto: UpdateProductDto) {
+  async update(id: string, updateProductDto: UpdateProductDto, user: User) {
     // toUpdate es la data que se va a actulizar sin las imágenes.
     const { images, ...toUpdate } = updateProductDto;
 
@@ -193,6 +195,7 @@ export class ProductsService {
         // });
       }
 
+      product.user = user;
       // Sigue sin ser commit. No se impacta todavía en BD
       await queryRunner.manager.save(product);
 

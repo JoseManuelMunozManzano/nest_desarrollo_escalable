@@ -15,7 +15,8 @@ import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { PaginationDto } from '../common/dtos/pagination.dto';
 
-import { Auth } from '../auth/decorators';
+import { Auth, GetUser } from '../auth/decorators';
+import { User } from '../auth/entities/user.entity';
 import { ValidRoles } from '../auth/interfaces';
 
 // Indicamos autorización a nivel de controlador. Debemos estar autenticados para poder usar cualquier
@@ -25,10 +26,11 @@ import { ValidRoles } from '../auth/interfaces';
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
+  // Al crear el producto vamos a indicar el usuario que lo crea.
   @Post()
-  @Auth(ValidRoles.user)
-  create(@Body() createProductDto: CreateProductDto) {
-    return this.productsService.create(createProductDto);
+  @Auth()
+  create(@Body() createProductDto: CreateProductDto, @GetUser() user: User) {
+    return this.productsService.create(createProductDto, user);
   }
 
   @Get()
@@ -46,8 +48,9 @@ export class ProductsController {
   update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateProductDto: UpdateProductDto,
+    @GetUser() user: User,
   ) {
-    return this.productsService.update(id, updateProductDto);
+    return this.productsService.update(id, updateProductDto, user);
   }
 
   @Delete(':id')

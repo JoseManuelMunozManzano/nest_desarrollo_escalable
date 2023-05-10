@@ -24,9 +24,10 @@ export class SeedService {
 
     const insertPromises = [];
 
-    products.forEach((product) => {
-      insertPromises.push(this.productsService.create(product));
-    });
+    // Comentado por ahora para que no de error.
+    // products.forEach((product) => {
+    //   insertPromises.push(this.productsService.create(product));
+    // });
 
     await Promise.all(insertPromises);
 
