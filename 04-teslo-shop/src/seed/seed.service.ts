@@ -2,6 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
+import * as bcrypt from 'bcrypt';
+
 import { ProductsService } from '../products/products.service';
 import { initialData } from './data/seed-data';
 import { User } from '../auth/entities/user.entity';
@@ -42,12 +44,18 @@ export class SeedService {
     // Un insert multilinea.
     const users: User[] = [];
 
-    seedUsers.forEach((user) => {
+    // Se encripta la contraseña.
+    seedUsers.forEach(({ password, ...user }) => {
       // Recordar que esto crea pero no salva en Base de Datos.
-      users.push(this.userRepository.create(user));
+      users.push(
+        this.userRepository.create({
+          ...user, // Esta es la encriptación, con un salt de 10
+          password: bcrypt.hashSync(password, 10),
+        }),
+      );
     });
 
-    const dbUsers = await this.userRepository.save(seedUsers);
+    const dbUsers = await this.userRepository.save(users);
 
     // Se devuelve el primer usuario para que este insertUsers se pueda pasar como argumento en insertNewProducts.
     return dbUsers[0];
