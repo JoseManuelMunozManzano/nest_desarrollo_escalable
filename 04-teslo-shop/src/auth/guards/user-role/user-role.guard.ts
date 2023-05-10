@@ -29,10 +29,14 @@ export class UserRoleGuard implements CanActivate {
   canActivate(
     context: ExecutionContext,
   ): boolean | Promise<boolean> | Observable<boolean> {
-    const validRoles: string[] = this.reflector.get(
-      META_ROLES,
+    // Se modifica del método get() a getAllAndOverride() y se incluye context.getClass() para que funcione
+    // el role en products.controller.ts a nivel de controlador, porque si no, no funciona correctamente
+    // al indicar un rol concreto en @Auth
+    // Ver: https://docs.nestjs.com/security/authorization#basic-rbac-implementation
+    const validRoles: string[] = this.reflector.getAllAndOverride(META_ROLES, [
       context.getHandler(),
-    );
+      context.getClass(),
+    ]);
 
     if (!validRoles) return true;
     if (validRoles.length === 0) return true;
