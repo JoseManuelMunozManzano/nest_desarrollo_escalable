@@ -6,12 +6,14 @@ import {
   BeforeUpdate,
   Column,
   Entity,
+  ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
 // Importándolo del archivo de barril index.ts
 import { ProductImage } from './';
+import { User } from '../../auth/entities/user.entity';
 
 // Como hay muchos productos, se cambia el nombre para que en BD el nombre de la tabla sea products y no product.
 // Si borramos las tablas para partir de cero, tenemos que echar abajo la ejecución, ir a Docker y borrar el
@@ -85,6 +87,19 @@ export class Product {
     eager: true,
   })
   images?: ProductImage[];
+
+  // Vamos a indicar que usuario creo el producto.
+  // Muchos productos pueden ser creados por solo un usuario (Many to One)
+  // Se va a crear una nueva columna.
+  @ManyToOne(
+    // Entidad con la que se relaciona
+    () => User,
+    // Instancia del usuario y como se relaciona con esta tabla.
+    (user) => user.product,
+    // Para ver que usuario creo el producto. Carga automáticamente la relación.
+    { eager: true },
+  )
+  user: User;
 
   // Cada vez que vayamos a insertar, antes vamos a realizar estas acciones.
   // Sería como un trigger.

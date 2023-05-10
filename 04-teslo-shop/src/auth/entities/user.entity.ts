@@ -7,8 +7,10 @@ import {
   BeforeUpdate,
   Column,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { Product } from '../../products/entities';
 
 @Entity('users')
 export class User {
@@ -40,6 +42,17 @@ export class User {
     default: ['user'],
   })
   roles: string[];
+
+  // Vamos a indicar que usuario creo el producto.
+  // Un usuario puede crear muchos productos (One to Many)
+  // Un One to Many no crea una nueva columna.
+  @OneToMany(
+    // Entidad con la que se relaciona
+    () => Product,
+    // Instancia del producto y como se relaciona con esta tabla.
+    (product) => product.user,
+  )
+  product: Product;
 
   // Esto sería parecido a triggers en bases de datos. Antes de insertar y de actualizar hazme cosas.
   // Esta medida de seguridad se añade porque se podría dar de alta un email en mayúsculas y luego buscarlo
