@@ -70,6 +70,8 @@ import { JwtStrategy } from './strategies/jwt.strategy';
   // Todavía no haría falta, pero sabemos que vamos a usar el modelo User y la configuración que hemos hecho aquí
   // en otros módulos.
   // Para poder exportar nuestra estrategia de Jwt a otros módulos, por si queremos validar el token manualmente...
+  //
+  // Esto hace falta para poder usar en otros módulos todo lo referente a la autenticación - autorización.
   exports: [TypeOrmModule, JwtStrategy, PassportModule, JwtModule],
 })
 export class AuthModule {}

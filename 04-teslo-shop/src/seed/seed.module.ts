@@ -4,7 +4,8 @@
 
 import { Module } from '@nestjs/common';
 
-import { ProductsModule } from 'src/products/products.module';
+import { ProductsModule } from './../products/products.module';
+import { AuthModule } from './../auth/auth.module';
 
 import { SeedService } from './seed.service';
 import { SeedController } from './seed.controller';
@@ -13,6 +14,7 @@ import { SeedController } from './seed.controller';
   controllers: [SeedController],
   providers: [SeedService],
   // Recordar que se importa el módulo.
-  imports: [ProductsModule],
+  // Importamos AuthModule para poder usar el decorador Auth() en este módulo.
+  imports: [ProductsModule, AuthModule],
 })
 export class SeedModule {}

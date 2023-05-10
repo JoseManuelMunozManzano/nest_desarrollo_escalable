@@ -13,7 +13,11 @@ export class SeedController {
   // Esto falla con error:
   // ERROR [AuthGuard] In order to use "defaultStrategy", please, ensure to import PassportModule in each place
   // where AuthGuard() is being used. Otherwise, passport won't work correctly.
-  //@Auth(ValidRoles.admin)
+  //
+  // El problema es que @Auth() usa AuthGuard() que está conectado a passport, y passport es un módulo.
+  // Tenemos que exportar y hacer visible para todo el mundo nuestro módulo Auth. Ver auth.module.ts y seed.module.ts
+  // Una vez hechas las exportaciones / importaciones, ya funciona correctamente.
+  @Auth(ValidRoles.admin)
   executeSeed() {
     return this.seedService.runSeed();
   }
