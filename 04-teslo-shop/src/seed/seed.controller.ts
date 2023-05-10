@@ -18,7 +18,8 @@ export class SeedController {
   // Tenemos que exportar y hacer visible para todo el mundo nuestro módulo Auth. Ver auth.module.ts y seed.module.ts
   // Una vez hechas las exportaciones / importaciones, ya funciona correctamente.
   //
-  // Se quita porque no tenemos usuarios.
+  // Se quita porque no tenemos usuarios y queremos que se ejecute.
+  // Luego, tenemos que tener mucho cuidado con producción, quitar la posibilidad de ejecutar esto o con role admin...
   //@Auth(ValidRoles.admin)
   executeSeed() {
     return this.seedService.runSeed();
