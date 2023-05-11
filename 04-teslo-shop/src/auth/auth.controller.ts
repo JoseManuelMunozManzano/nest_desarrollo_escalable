@@ -33,6 +33,15 @@ export class AuthController {
     return this.authService.login(loginUserDto);
   }
 
+  // Método cuando se refresca el navegador, para devolver la información del usuario con un nuevo token.
+  @Get('check-status')
+  @Auth()
+  checkAuthStatus(
+    @GetUser(/*Si solo quisiéramos el id aquí indicaríamos 'id' */) user: User,
+  ) {
+    return this.authService.checkAuthStatus(user);
+  }
+
   // Creamos la primera ruta privada.
   // Su misión es asegurarse de que el JSON Web Token esté presente en el header como un bearer token,
   // Que el usuario exista, esté activo y el token no haya expirado.
