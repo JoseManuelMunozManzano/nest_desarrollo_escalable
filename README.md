@@ -229,3 +229,5 @@ Se ha visto:
 - Custom Property Decorators
 - Enlazar usuarios con productos
 - Bearer Tokens
+- Postman documentation
+- Nest Swagger
