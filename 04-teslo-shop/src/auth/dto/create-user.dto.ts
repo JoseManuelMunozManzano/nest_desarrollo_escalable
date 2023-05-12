@@ -1,3 +1,4 @@
+import { ApiProperty } from '@nestjs/swagger';
 import {
   IsEmail,
   IsString,
@@ -8,10 +9,22 @@ import {
 
 // Recordar que los dto serían una representación de lo que espero que me envíen en el body del request.
 export class CreateUserDto {
+  @ApiProperty({
+    description: 'User email',
+    nullable: false,
+    required: true,
+  })
   @IsString()
   @IsEmail()
   email: string;
 
+  @ApiProperty({
+    description: 'User password',
+    nullable: false,
+    minLength: 6,
+    maxLength: 50,
+    required: true,
+  })
   @IsString()
   @MinLength(6)
   @MaxLength(50)
@@ -22,6 +35,12 @@ export class CreateUserDto {
   })
   password: string;
 
+  @ApiProperty({
+    description: 'User fullname',
+    nullable: false,
+    minLength: 1,
+    required: true,
+  })
   @IsString()
   @MinLength(1)
   fullName: string;
