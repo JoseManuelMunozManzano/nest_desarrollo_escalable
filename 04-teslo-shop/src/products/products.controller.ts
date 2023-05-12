@@ -9,6 +9,7 @@ import {
   ParseUUIDPipe,
   Query,
 } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
@@ -22,6 +23,9 @@ import { ValidRoles } from '../auth/interfaces';
 // Indicamos autorización a nivel de controlador. Debemos estar autenticados para poder usar cualquier
 // ruta de products.
 //@Auth(ValidRoles.superUser)
+
+// Para añadir descripciones cuando estamos generando el Open API y meter todos los endpoints dentro de este tag.
+@ApiTags('Products')
 @Controller('products')
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}

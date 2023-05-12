@@ -28,6 +28,9 @@ async function bootstrap() {
   // Nota: Los tags no los vamos a hacer aquí.
   // Ir a la ruta siguiente para ver Swagger: http://localhost:3001/api
   // Nos falta todavía mucha información de los endpoints pero ya podríamos lanzar pruebas.
+  //
+  // Vamos a agrupar con tags todo lo que tiene relación, en vez de tenerlo todo bajo default.
+  // Para ello, ver en cada controller el decorador @ApiTags()
   const config = new DocumentBuilder()
     .setTitle('Teslo RESTFul API')
     .setDescription('Teslo shop endpoints')
