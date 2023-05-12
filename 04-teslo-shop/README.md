@@ -37,6 +37,12 @@ yarn start:dev
 http://localhost:3001/api/seed
 ```
 
+8. Ver OpenApi
+
+```
+http://localhost:3001/api
+```
+
 Se ha visto:
 
 - TypeORM
