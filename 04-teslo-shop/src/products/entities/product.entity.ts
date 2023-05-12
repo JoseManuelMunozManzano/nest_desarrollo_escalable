@@ -10,6 +10,7 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { ApiProperty } from '@nestjs/swagger';
 
 // Importándolo del archivo de barril index.ts
 import { ProductImage } from './';
@@ -25,22 +26,30 @@ import { User } from '../../auth/entities/user.entity';
 @Entity({ name: 'products' })
 export class Product {
   // Vamos a usar 'uuid' que me da más control que un número incremental ('increment').
+  //
+  // Para indicar las propiedades en OpenAPI se usa @ApiProperty.
+  // Falta indicar al usuario más información sobre los campos, para indicar que este id no es solo un string,
+  // también es un uuid y que es único.
+  @ApiProperty()
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
   // Se pueden añadir configuraciones a @Column. En este ejemplo se ha indicado que title es un text y es unique.
+  @ApiProperty()
   @Column('text', {
     unique: true,
   })
   title: string;
 
   // Si no ponemos float no es numérico
+  @ApiProperty()
   @Column('float', {
     // Valor por defecto
     default: 0,
   })
   price: number;
 
+  @ApiProperty()
   @Column({
     // Otra forma de indicar el tipo del campo
     type: 'text',
@@ -50,26 +59,31 @@ export class Product {
 
   // Para tener urls friendly y obtener el producto
   // unique crea índices de forma automática
+  @ApiProperty()
   @Column('text', {
     unique: true,
   })
   slug: string;
 
+  @ApiProperty()
   @Column('int', {
     default: 0,
   })
   stock: number;
 
   // Ejemplo de arreglo
+  @ApiProperty()
   @Column('text', {
     array: true,
   })
   sizes: string[];
 
+  @ApiProperty()
   @Column('text')
   gender: string;
 
   // Ejemplo de petición real de añadir un campo nuevo tags
+  @ApiProperty()
   @Column('text', {
     array: true,
     default: [],
@@ -80,6 +94,7 @@ export class Product {
   // Estableciendo la relación.
   // Un producto puede tener muchas imágenes.
   // Se indica que regresa un ProductImage y como la otra tabla se relaciona con esta.
+  @ApiProperty()
   @OneToMany(() => ProductImage, (productImage) => productImage.product, {
     cascade: true,
     // Para en products.service.ts, método findOne() pueda cargar también las imágenes.
@@ -91,6 +106,8 @@ export class Product {
   // Vamos a indicar que usuario creo el producto.
   // Muchos productos pueden ser creados por solo un usuario (Many to One)
   // Se va a crear una nueva columna.
+  //
+  // No indicar aquí @ApiProperty() porque nos daría un error porque no tenemos establecida la relación directamente.
   @ManyToOne(
     // Entidad con la que se relaciona
     () => User,
