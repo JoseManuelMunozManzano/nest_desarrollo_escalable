@@ -1,4 +1,5 @@
 // Recordar que los controladores son los que escuchan los requests y emiten una respuesta.
+import { IncomingHttpHeaders } from 'http';
 import {
   Controller,
   Post,
@@ -9,13 +10,12 @@ import {
   SetMetadata,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 import { AuthService } from './auth.service';
 import { CreateUserDto, LoginUserDto } from './dto';
 import { Auth, GetUser, RawHeaders } from './decorators';
 import { User } from './entities/user.entity';
-import { IncomingHttpHeaders } from 'http';
 import { UserRoleGuard } from './guards/user-role/user-role.guard';
 import { RoleProtected } from './decorators/role-protected.decorator';
 import { ValidRoles } from './interfaces';
@@ -64,6 +64,11 @@ export class AuthController {
   // Vamos a hacer que GetUser reciba un argumento (si fuera más de uno se usaría un arreglo ['email' 'passord']
   // por ejemplo), es decir, vamos a usar GetUser de las dos maneras, con argumentos y sin argumentos.
   // Si no mandamos argumentos esperaríamos ver todo el usuario. Si le mandamos el email queremos solo el email.
+  //
+  // Para indicar que es necesario autorización. Indicar que 'JWT-auth' es el mismo string que tiene que aparecer
+  // en main.ts
+  // En swagger se verá un candado indicando que tiene seguridad y que hay que indicar un bearer-token.
+  @ApiBearerAuth('JWT-auth')
   @Get('private')
   @UseGuards(AuthGuard())
   testingPrivateRoute(

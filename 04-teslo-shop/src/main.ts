@@ -35,6 +35,19 @@ async function bootstrap() {
     .setTitle('Teslo RESTFul API')
     .setDescription('Teslo shop endpoints')
     .setVersion('1.0')
+    // En swagger se verá un candado indicando que tiene seguridad y que hay que indicar un bearer-token.
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+        name: 'JWT',
+        description: 'Enter JWT token',
+        in: 'header',
+      },
+      // This name here is important for matching up with @ApiBearerAuth()in your controller!)
+      'JWT-auth',
+    )
     .build();
   const document = SwaggerModule.createDocument(app, config);
   // Este es el endpoint al que tenemos que apuntar para ver swagger.
