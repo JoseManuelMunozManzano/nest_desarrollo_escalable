@@ -10,33 +10,63 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { ApiProperty } from '@nestjs/swagger';
+
 import { Product } from '../../products/entities';
 
 @Entity('users')
 export class User {
+  @ApiProperty({
+    example: '7497da33-3672-4a0c-b8c9-556817aaa7d9',
+    description: 'User Id',
+    uniqueItems: true,
+  })
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
+  @ApiProperty({
+    example: 'mymail@mail.com',
+    description: 'User Email',
+    uniqueItems: true,
+  })
   @Column('text', {
     unique: true,
   })
   email: string;
 
   // select es para indicar si la columna se selecciona en un QueryBuilder y operaciones find.
+  @ApiProperty({
+    example: 'password',
+    description: 'User Password',
+  })
   @Column('text', {
     select: false,
   })
   password: string;
 
+  @ApiProperty({
+    example: 'John Doe',
+    description: 'User FullName',
+  })
   @Column('text')
   fullName: string;
 
   // No se van a eliminar usuarios físicamente de la BD.
+  @ApiProperty({
+    example: 'true',
+    description: 'User IsActive',
+    default: true,
+  })
   @Column('bool', {
     default: true,
   })
   isActive: boolean;
 
+  @ApiProperty({
+    example: ['admin', 'super', 'user'],
+    description: 'User Roles',
+    default: ['user'],
+  })
   @Column('text', {
     array: true,
     default: ['user'],

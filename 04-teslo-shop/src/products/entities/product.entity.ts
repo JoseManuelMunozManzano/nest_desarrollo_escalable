@@ -30,26 +30,42 @@ export class Product {
   // Para indicar las propiedades en OpenAPI se usa @ApiProperty.
   // Falta indicar al usuario más información sobre los campos, para indicar que este id no es solo un string,
   // también es un uuid y que es único.
-  @ApiProperty()
+  // Hay muchas propiedades y se muestran algunas de ejemplo.
+  @ApiProperty({
+    example: '7497da33-3672-4a0c-b8c9-556817aaa7d9',
+    description: 'Product ID',
+    uniqueItems: true,
+  })
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
   // Se pueden añadir configuraciones a @Column. En este ejemplo se ha indicado que title es un text y es unique.
-  @ApiProperty()
+  @ApiProperty({
+    example: 'T-Shirt Teslo',
+    description: 'Product Title',
+    uniqueItems: true,
+  })
   @Column('text', {
     unique: true,
   })
   title: string;
 
   // Si no ponemos float no es numérico
-  @ApiProperty()
+  @ApiProperty({
+    example: 0,
+    description: 'Product Price',
+  })
   @Column('float', {
     // Valor por defecto
     default: 0,
   })
   price: number;
 
-  @ApiProperty()
+  @ApiProperty({
+    example: 'In duis irure duis aliqua voluptate velit veniam.',
+    description: 'Product Description',
+    default: null,
+  })
   @Column({
     // Otra forma de indicar el tipo del campo
     type: 'text',
@@ -59,31 +75,49 @@ export class Product {
 
   // Para tener urls friendly y obtener el producto
   // unique crea índices de forma automática
-  @ApiProperty()
+  @ApiProperty({
+    example: 't_shirt_teslo',
+    description: 'Product SLUG - for SEO',
+    uniqueItems: true,
+  })
   @Column('text', {
     unique: true,
   })
   slug: string;
 
-  @ApiProperty()
+  @ApiProperty({
+    example: 10,
+    description: 'Product Stock',
+    default: 0,
+  })
   @Column('int', {
     default: 0,
   })
   stock: number;
 
   // Ejemplo de arreglo
-  @ApiProperty()
+  @ApiProperty({
+    example: ['M', 'XL', 'XXL'],
+    description: 'Product Sizes',
+  })
   @Column('text', {
     array: true,
   })
   sizes: string[];
 
-  @ApiProperty()
+  @ApiProperty({
+    example: 'women',
+    description: 'Product Gender',
+  })
   @Column('text')
   gender: string;
 
   // Ejemplo de petición real de añadir un campo nuevo tags
-  @ApiProperty()
+  @ApiProperty({
+    example: ['shirt', 'hats'],
+    description: 'Product Tags',
+    default: [],
+  })
   @Column('text', {
     array: true,
     default: [],
@@ -94,7 +128,10 @@ export class Product {
   // Estableciendo la relación.
   // Un producto puede tener muchas imágenes.
   // Se indica que regresa un ProductImage y como la otra tabla se relaciona con esta.
-  @ApiProperty()
+  @ApiProperty({
+    example: '1740176-00-A_0_2000.jpg',
+    description: 'Product Images',
+  })
   @OneToMany(() => ProductImage, (productImage) => productImage.product, {
     cascade: true,
     // Para en products.service.ts, método findOne() pueda cargar también las imágenes.
