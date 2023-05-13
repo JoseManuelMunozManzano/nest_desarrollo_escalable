@@ -240,3 +240,26 @@ Se ha visto:
 - Usar mismos mecanismos de autenticación previamente creado
 - Desconectar sockets manualmente
 - Prevenir doble conexión de usuarios autenticados
+
+### 05-ws-client
+
+Es la parte cliente de teslo-shop para el WebSocket que tenemos implementado.
+Hecho en Vanilla JavaScript con TypeScript.
+
+Proyecto creado con:
+
+```
+yarn create vite
+```
+
+Luego accedemos a la carpeta e instalamos las dependencias de vite:
+
+```
+yarn
+```
+
+Para ejecutar:
+
+```
+yarn dev
+```
