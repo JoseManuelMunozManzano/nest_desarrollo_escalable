@@ -15,5 +15,8 @@ export interface ConnectedClients {
   [id: string]: {
     socket: Socket;
     user: User;
+    // Esto es una forma de permitir que un usuario tenga más de una conexión en función del dispositivo.
+    //desktop: boolean;
+    //mobile: boolean;
   };
 }

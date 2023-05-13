@@ -28,6 +28,8 @@ export class MessagesWsService {
     if (!user) throw new Error('User not found');
     if (!user.isActive) throw new Error('User not active');
 
+    this.checkUserConnection(user);
+
     this.connectedClients[client.id] = {
       socket: client,
       user: user,
@@ -46,5 +48,20 @@ export class MessagesWsService {
 
   getUserFullName(socketId: string) {
     return this.connectedClients[socketId].user.fullName;
+  }
+
+  // Si en el cliente toco varias veces el botón de Connect, por cada vez que pulse, me genera un usuario activo.
+  // Puede ser que sea eso lo que quiero, por ejemplo si un usuario se conecta desde un ordenador, una tablet y un móvil,
+  // pero igualmente puede que no, por lo que vamos a hacer que cada usuario solo pueda tener una conexión activa a
+  // la vez.
+  private checkUserConnection(user: User) {
+    for (const clientId of Object.keys(this.connectedClients)) {
+      const connectedClient = this.connectedClients[clientId];
+
+      if (connectedClient.user.id === user.id) {
+        connectedClient.socket.disconnect();
+        break;
+      }
+    }
   }
 }

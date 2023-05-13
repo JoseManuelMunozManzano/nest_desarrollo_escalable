@@ -5,6 +5,8 @@
 // La versión del servidor aparece en: http://localhost:3001/socket.io/socket.io.js
 import { Manager, Socket } from 'socket.io-client';
 
+let socket: Socket;
+
 export const connectToServer = (token: string) => {
   // Trabajamos con el mánager porque nos da más flexibilidad y poder. La otra opción es trabajar con io directamente.
   //
@@ -16,20 +18,36 @@ export const connectToServer = (token: string) => {
     },
   });
 
+  // Se pueden eliminar todos los listeners sobre el socket. Esto es importante porque cada vez que intentamos
+  // establecer la conexión se generan si o si los listeners.
+  //
+  // Si el server desconecta, sigo teniendo el problema de que los listeners actuales siguen en memoria.
+  // Para solucionar esto, saco la declaración de la variable socket fuera de la función y pregunto si existe
+  // el socket para borrar los listeners anteriores antes de crear los nuevos.
+  socket?.removeAllListeners();
+
   // Para conectarnos indicamos el namespace (la casa), en este caso el root /
   // Adicionalmente se va a conectar a otro namespace que va a tener el id del cliente.
   // El socket generado es la comunicación activo - activo con el servidor.
   // Indicar que todos los clientes estarán conectados al servidor y el servidor a su vez está conectado a todos los clientes.
-  const socket = manager.socket('/');
+  socket = manager.socket('/');
 
   // Para ver más información del socket que está conectado.
   // La información más útil está en socket.io, que es la del Manager.
   // console.log({ socket });
 
-  addListeners(socket);
+  // Este socket que se envía a la función hay que quitarlo porque ya lo tenemos global.
+  // Si lo dejamos vemos que no funciona la recepción del mensaje, es decir, escribo un mensaje y no aparece
+  // escrito.
+  // Esto es porque el socket que aparece en esta función no es el nuevo a nivel global, fuera de la función, existente,
+  // sino uno anterior. Es un problema de scope.
+  //
+  //addListeners(socket);
+  addListeners();
 };
 
-const addListeners = (socket: Socket) => {
+//const addListeners = (socket: Socket) => {
+const addListeners = () => {
   const clientsUl = document.querySelector('#clients-ul')!;
   const messageForm = document.querySelector<HTMLFormElement>('#message-form')!;
   const messageInput = document.querySelector<HTMLInputElement>('#message-input')!;
