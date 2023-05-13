@@ -11,11 +11,12 @@ import {
   WebSocketGateway,
   WebSocketServer,
 } from '@nestjs/websockets';
+import { JwtService } from '@nestjs/jwt';
 import { Server, Socket } from 'socket.io';
 
 import { MessagesWsService } from './messages-ws.service';
 import { NewMessageDto } from './dtos/new-message.dto';
-import { ValidationPipe } from '@nestjs/common';
+import { JwtPayload } from '../auth/interfaces';
 
 // La única diferencia entre este controlador y los otros que hemos visto en el curso es este decorador.
 // Con esto que tenemos aquí vamos a poder escuchar clientes que se conectan, acceso al WebSocket server y
@@ -38,7 +39,12 @@ export class MessagesWsGateway
   // Tiene la información de todos los clientes conectados.
   @WebSocketServer() wss: Server;
 
-  constructor(private readonly messagesWsService: MessagesWsService) {}
+  constructor(
+    private readonly messagesWsService: MessagesWsService,
+    // Inyección de depdendencia de JwtService para verificar el JWT que me envía el client.
+    // También se podría haber inyectado en messages-ws.service.ts, pero se ha hecho aquí por simplicidad.
+    private readonly jwtService: JwtService,
+  ) {}
 
   handleConnection(client: Socket) {
     // Ahora en la variable client viene esa información adicional (token) enviado desde el client.
@@ -49,7 +55,20 @@ export class MessagesWsGateway
     // Falta ahora validar si es un JSON Web Token válido y si lo es, a quien le corresponde.
     // En caso de error, no permitir conectarse al cliente.
     const token = client.handshake.headers.authentication as string;
-    console.log({ token });
+    let payload: JwtPayload;
+
+    try {
+      // El payload, si se verifica correctamente el token, tiene el id de la persona que se quiere conectar.
+      payload = this.jwtService.verify(token);
+    } catch (error) {
+      // No se van a tratar las excepciones como indica Nest: https://docs.nestjs.com/websockets/exception-filters
+      // porque no me gustan.
+      // En cambio, vamos a desconectar al cliente y salir.
+      client.disconnect();
+      return;
+    }
+
+    console.log({ payload });
 
     // Indicar que el id es muy volátil
     this.messagesWsService.registerClient(client);
