@@ -7,12 +7,15 @@
 import {
   OnGatewayConnection,
   OnGatewayDisconnect,
+  SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 
 import { MessagesWsService } from './messages-ws.service';
+import { NewMessageDto } from './dtos/new-message.dto';
+import { ValidationPipe } from '@nestjs/common';
 
 // La única diferencia entre este controlador y los otros que hemos visto en el curso es este decorador.
 // Con esto que tenemos aquí vamos a poder escuchar clientes que se conectan, acceso al WebSocket server y
@@ -58,5 +61,14 @@ export class MessagesWsGateway
       'clients-updated',
       this.messagesWsService.getConnectedClients(),
     );
+  }
+
+  // Para escuchar eventos del cliente se usa el decorador @SubscribeMessage
+  // Se indica el nombre del evento que se está escuchando.
+  // Usando el decorador tenemos acceso inmediato al cliente, de tipo Socket, que es el socket que está emitiendo
+  // el evento, y el payload
+  @SubscribeMessage('message-from-client')
+  onMessageFromClient(client: Socket, payload: NewMessageDto) {
+    console.log(client.id, payload);
   }
 }

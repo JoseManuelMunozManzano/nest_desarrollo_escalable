@@ -25,6 +25,8 @@ export const connectToServer = () => {
 const addListeners = (socket: Socket) => {
   const serverStatusLabel = document.querySelector('#server-status')!;
   const clientsUl = document.querySelector('#clients-ul')!;
+  const messageForm = document.querySelector<HTMLFormElement>('#message-form')!;
+  const messageInput = document.querySelector<HTMLInputElement>('#message-input')!;
 
   // Escuchar eventos que vienen del servidor: socket.on
   socket.on('connect', () => {
@@ -48,4 +50,16 @@ const addListeners = (socket: Socket) => {
   });
 
   // Hablar con el servidor: socket.emit
+  // Como tercer argumento se puede ejecutar una función si el servidor hace el trabajo.
+  messageForm.addEventListener('submit', (event) => {
+    event.preventDefault();
+    if (messageInput.value.trim().length <= 0) return;
+
+    socket.emit('message-from-client', {
+      id: 'YO!!',
+      message: messageInput.value,
+    });
+
+    messageInput.value = '';
+  });
 };
