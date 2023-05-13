@@ -5,6 +5,8 @@
 // Un Gateway es básicamente un controlador que envuelve una implementación de socket.io o ws.
 // Su misión es habilitar que el servidor pueda mandar información al cliente sin que este la solicite.
 // Ver: https://docs.nestjs.com/websockets/gateways
+//
+// Para saber más sobre socket.io: https://socket.io/
 import { Module } from '@nestjs/common';
 import { MessagesWsService } from './messages-ws.service';
 import { MessagesWsGateway } from './messages-ws.gateway';

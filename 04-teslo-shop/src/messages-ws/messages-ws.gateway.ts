@@ -1,6 +1,16 @@
 // Hay que instalar:
 // yarn add @nestjs/websockets @nestjs/platform-socket.io
-import { WebSocketGateway } from '@nestjs/websockets';
+//
+// También instalamos:
+// yarn add socket.io
+// Para poder tener acceso a funcionalidades como tipo Socket...
+import {
+  OnGatewayConnection,
+  OnGatewayDisconnect,
+  WebSocketGateway,
+} from '@nestjs/websockets';
+import { Socket } from 'socket.io';
+
 import { MessagesWsService } from './messages-ws.service';
 
 // La única diferencia entre este controlador y los otros que hemos visto en el curso es este decorador.
@@ -13,7 +23,21 @@ import { MessagesWsService } from './messages-ws.service';
 // Además este es el url que tenemos que dar al cliente para conectarse.
 //
 // Habilitamos cors
+//
+// Cuando un cliente se conecta, queremos saber el id de ese cliente y cuando un cliente se desconecta queremos saber
+// que cliente se desconectó. Para esto implementamos dos interfaces: OnGatewayConnection y OnGatewayDisconnect
 @WebSocketGateway({ cors: true })
-export class MessagesWsGateway {
+export class MessagesWsGateway
+  implements OnGatewayConnection, OnGatewayDisconnect
+{
   constructor(private readonly messagesWsService: MessagesWsService) {}
+
+  handleConnection(client: Socket) {
+    // Indicar que el id es muy volátil
+    console.log('Cliente conectado:', client.id);
+  }
+
+  handleDisconnect(client: Socket) {
+    console.log('Cliente desconectado:', client.id);
+  }
 }
