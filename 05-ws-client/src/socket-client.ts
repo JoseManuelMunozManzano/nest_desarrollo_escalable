@@ -22,17 +22,29 @@ export const connectToServer = () => {
   addListeners(socket);
 };
 
-// Indicaremos cuando hay conexión / desconexión con el servidor.
 const addListeners = (socket: Socket) => {
-  const serverStatusLabel = document.querySelector('#server-status');
+  const serverStatusLabel = document.querySelector('#server-status')!;
+  const clientsUl = document.querySelector('#clients-ul')!;
 
   // Escuchar eventos que vienen del servidor: socket.on
   socket.on('connect', () => {
-    serverStatusLabel!.innerHTML = 'CONNECTED';
+    serverStatusLabel.innerHTML = 'CONNECTED';
   });
 
   socket.on('disconnect', () => {
-    serverStatusLabel!.innerHTML = 'DISCONNECTED';
+    serverStatusLabel.innerHTML = 'DISCONNECTED';
+  });
+
+  // Queremos saber el id de todos los usuarios que están conectados.
+  socket.on('clients-updated', (clients: string[]) => {
+    let clientsHtml = '';
+    clients.forEach((clientId) => {
+      clientsHtml += `
+        <li>${clientId}</li>
+      `;
+    });
+
+    clientsUl.innerHTML = clientsHtml;
   });
 
   // Hablar con el servidor: socket.emit
