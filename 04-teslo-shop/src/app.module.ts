@@ -25,6 +25,15 @@ import { MessagesWsModule } from './messages-ws/messages-ws.module';
     // Configuración del TypeOrm usando Postgres
     // NOTA: Se usa forFeature() cuando queremos expandir funcionalidades.
     TypeOrmModule.forRoot({
+      // Configuraciones necesarias para poder realizar una conexión certificada (solo para producción)
+      // En package.json se ha indicado la versión de node 19.x porque esa ha sido mi versión.
+      // Y he cambiado lo que ejecuta en scripts, el start por el start:prod, ya que Heroku ejecuta start.
+      ssl: process.env.STAGE === 'prod',
+      extra: {
+        ssl:
+          process.env.STAGE === 'prod' ? { rejectUnauthorized: false } : null,
+      },
+
       type: 'postgres',
       host: process.env.DB_HOST,
       port: +process.env.DB_PORT,
