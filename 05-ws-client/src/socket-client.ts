@@ -28,11 +28,11 @@ const addListeners = (socket: Socket) => {
 
   // Escuchar eventos que vienen del servidor: socket.on
   socket.on('connect', () => {
-    serverStatusLabel.innerHTML = 'CONNECTED';
+    serverStatusLabel!.innerHTML = 'CONNECTED';
   });
 
   socket.on('disconnect', () => {
-    serverStatusLabel.innerHTML = 'DISCONNECTED';
+    serverStatusLabel!.innerHTML = 'DISCONNECTED';
   });
 
   // Hablar con el servidor: socket.emit
