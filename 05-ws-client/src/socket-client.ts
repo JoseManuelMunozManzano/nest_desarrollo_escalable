@@ -11,6 +11,8 @@ export const connectToServer = (token: string) => {
   // Trabajamos con el mánager porque nos da más flexibilidad y poder. La otra opción es trabajar con io directamente.
   //
   // Al establecer la conexión podemos añadir información adicional
+  // NOTA IMPORTANTE: Para el despligue en Producción, habrá que cambiar esta ruta por la que indique el servicio
+  //    donde lo vayamos a subir. Ejemplo: https://teslo-nest.herokuapp.com/socket.io/socket.io.js
   const manager = new Manager('http://localhost:3001/socket.io/socket.io.js', {
     extraHeaders: {
       hola: 'mundo',

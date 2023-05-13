@@ -22,3 +22,12 @@ yarn dev
 ```
 
 Para que funcione esta parte, el proyecto 04-teslo-shop debe estar ejecutándose. Ver sus instrucciones.
+
+Antes de subir a producción ejecutar:
+
+```
+yarn build
+```
+
+Con esto se creará el directorio dist.
+En Netifly podemos dejar caer la carpeta dist en el espacio de deploy y ya estaría.
