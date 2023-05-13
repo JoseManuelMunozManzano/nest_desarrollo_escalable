@@ -69,6 +69,35 @@ export class MessagesWsGateway
   // el evento, y el payload
   @SubscribeMessage('message-from-client')
   onMessageFromClient(client: Socket, payload: NewMessageDto) {
-    console.log(client.id, payload);
+    //! Posibilidades de emisiones a cliente:
+
+    //! Emitiendo el mensaje al cliente que nos envió el mensaje.
+    // client.emit('message-from-server', {
+    //   fullName: 'Soy Yo!',
+    //   message: payload.message || 'no-message!!',
+    // });
+
+    //! Emitiendo el mensaje a todos MENOS al cliente que nos envió el mensaje.
+    // client.broadcast.emit('message-from-server', {
+    //   fullName: 'Soy Yo!',
+    //   message: payload.message || 'no-message!!',
+    // });
+
+    //! Emitiendo el mensaje a todos los clientes.
+    this.wss.emit('message-from-server', {
+      fullName: 'Soy Yo!',
+      message: payload.message || 'no-message!!',
+    });
+
+    //! Emitiendo el mensaje a todos los clientes de una sala.
+    // Añadimos un cliente a una sala y le emitimos el mensaje.
+    // client.join('ventas');
+    // this.wss.to('ventas').emit('message-from-server', {
+    //   fullName: 'Soy Yo!',
+    //   message: payload.message || 'no-message!!',
+    // });
+    //
+    // Indicar que todos los clientes están unidos a la siguiente sala:
+    // client.join(client.id);
   }
 }
