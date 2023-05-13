@@ -20,7 +20,7 @@ export class MessagesWsService {
   }
 
   // Conteo de clientes conectados
-  getConnectedClients(): number {
-    return Object.keys(this.connectedClients).length;
+  getConnectedClients(): string[] {
+    return Object.keys(this.connectedClients);
   }
 }

@@ -8,8 +8,9 @@ import {
   OnGatewayConnection,
   OnGatewayDisconnect,
   WebSocketGateway,
+  WebSocketServer,
 } from '@nestjs/websockets';
-import { Socket } from 'socket.io';
+import { Server, Socket } from 'socket.io';
 
 import { MessagesWsService } from './messages-ws.service';
 
@@ -30,18 +31,32 @@ import { MessagesWsService } from './messages-ws.service';
 export class MessagesWsGateway
   implements OnGatewayConnection, OnGatewayDisconnect
 {
+  // Este decorador nos sirve para poder mandar notificaciones a todos los clientes.
+  // Tiene la información de todos los clientes conectados.
+  @WebSocketServer() wss: Server;
+
   constructor(private readonly messagesWsService: MessagesWsService) {}
 
   handleConnection(client: Socket) {
     // Indicar que el id es muy volátil
     this.messagesWsService.registerClient(client);
 
-    //console.log({ conectados: this.messagesWsService.getConnectedClients() });
+    // Cuando un cliente se conecta queremos mandar una notificación a TODOS los usuarios, mandado el id
+    // del nuevo cliente conectado.
+    // Indicamos en el evento clients-updated dicha lista de usuarios conectados.
+    this.wss.emit(
+      'clients-updated',
+      this.messagesWsService.getConnectedClients(),
+    );
   }
 
   handleDisconnect(client: Socket) {
     this.messagesWsService.removeClient(client.id);
 
-    //console.log({ conectados: this.messagesWsService.getConnectedClients() });
+    // Indicamos en el evento clients-updated dicha lista de usuarios conectados.
+    this.wss.emit(
+      'clients-updated',
+      this.messagesWsService.getConnectedClients(),
+    );
   }
 }
