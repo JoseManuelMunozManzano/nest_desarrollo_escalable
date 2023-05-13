@@ -41,6 +41,16 @@ export class MessagesWsGateway
   constructor(private readonly messagesWsService: MessagesWsService) {}
 
   handleConnection(client: Socket) {
+    // Ahora en la variable client viene esa información adicional (token) enviado desde el client.
+    // Ver handshake, donde se establece la conexión entre cliente y sevidor para ver esa data adicional.
+    //console.log(client);
+
+    // Se indica as string para que no se trate como un arreglo de strings.
+    // Falta ahora validar si es un JSON Web Token válido y si lo es, a quien le corresponde.
+    // En caso de error, no permitir conectarse al cliente.
+    const token = client.handshake.headers.authentication as string;
+    console.log({ token });
+
     // Indicar que el id es muy volátil
     this.messagesWsService.registerClient(client);
 

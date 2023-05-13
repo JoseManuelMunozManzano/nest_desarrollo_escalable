@@ -5,9 +5,16 @@
 // La versión del servidor aparece en: http://localhost:3001/socket.io/socket.io.js
 import { Manager, Socket } from 'socket.io-client';
 
-export const connectToServer = () => {
+export const connectToServer = (token: string) => {
   // Trabajamos con el mánager porque nos da más flexibilidad y poder. La otra opción es trabajar con io directamente.
-  const manager = new Manager('http://localhost:3001/socket.io/socket.io.js');
+  //
+  // Al establecer la conexión podemos añadir información adicional
+  const manager = new Manager('http://localhost:3001/socket.io/socket.io.js', {
+    extraHeaders: {
+      hola: 'mundo',
+      authentication: token,
+    },
+  });
 
   // Para conectarnos indicamos el namespace (la casa), en este caso el root /
   // Adicionalmente se va a conectar a otro namespace que va a tener el id del cliente.
