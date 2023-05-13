@@ -36,12 +36,12 @@ export class MessagesWsGateway
     // Indicar que el id es muy volátil
     this.messagesWsService.registerClient(client);
 
-    console.log({ conectados: this.messagesWsService.getConnectedClients() });
+    //console.log({ conectados: this.messagesWsService.getConnectedClients() });
   }
 
   handleDisconnect(client: Socket) {
     this.messagesWsService.removeClient(client.id);
 
-    console.log({ conectados: this.messagesWsService.getConnectedClients() });
+    //console.log({ conectados: this.messagesWsService.getConnectedClients() });
   }
 }
