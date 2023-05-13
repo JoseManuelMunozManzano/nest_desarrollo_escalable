@@ -1,4 +1,5 @@
 import { Socket } from 'socket.io';
+import { User } from '../../auth/entities/user.entity';
 
 // El id va a apuntar a un socket
 // Ejemplo:
@@ -8,6 +9,11 @@ import { Socket } from 'socket.io';
 //       ......
 //      'dsafldsfdsn': socket,
 //  }
+//
+// Adicionamos el usuario
 export interface ConnectedClients {
-  [id: string]: Socket;
+  [id: string]: {
+    socket: Socket;
+    user: User;
+  };
 }

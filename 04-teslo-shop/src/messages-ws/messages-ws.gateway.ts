@@ -46,7 +46,7 @@ export class MessagesWsGateway
     private readonly jwtService: JwtService,
   ) {}
 
-  handleConnection(client: Socket) {
+  async handleConnection(client: Socket) {
     // Ahora en la variable client viene esa información adicional (token) enviado desde el client.
     // Ver handshake, donde se establece la conexión entre cliente y sevidor para ver esa data adicional.
     //console.log(client);
@@ -60,6 +60,8 @@ export class MessagesWsGateway
     try {
       // El payload, si se verifica correctamente el token, tiene el id de la persona que se quiere conectar.
       payload = this.jwtService.verify(token);
+      // Se mueve la línea aquí porque puede lanzar un error, y si lanza un error lo quiero desconectar (catch)
+      await this.messagesWsService.registerClient(client, payload.id);
     } catch (error) {
       // No se van a tratar las excepciones como indica Nest: https://docs.nestjs.com/websockets/exception-filters
       // porque no me gustan.
@@ -67,11 +69,7 @@ export class MessagesWsGateway
       client.disconnect();
       return;
     }
-
-    console.log({ payload });
-
-    // Indicar que el id es muy volátil
-    this.messagesWsService.registerClient(client);
+    //console.log({ payload });
 
     // Cuando un cliente se conecta queremos mandar una notificación a TODOS los usuarios, mandado el id
     // del nuevo cliente conectado.
@@ -114,7 +112,7 @@ export class MessagesWsGateway
 
     //! Emitiendo el mensaje a todos los clientes.
     this.wss.emit('message-from-server', {
-      fullName: 'Soy Yo!',
+      fullName: this.messagesWsService.getUserFullName(client.id),
       message: payload.message || 'no-message!!',
     });
 
