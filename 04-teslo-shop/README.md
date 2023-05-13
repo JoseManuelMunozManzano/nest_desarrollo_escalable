@@ -81,3 +81,12 @@ Se ha visto:
 - Bearer Tokens
 - Postman documentation
 - Nest Swagger
+- Nest Gateways
+- Conexiones
+- Desconexiones
+- Emitir y escuchar mensajes desde el servidor y cliente
+- Cliente con Vite y TS
+- Autenticar conexión mediante JWTs
+- Usar mismos mecanismos de autenticación previamente creado
+- Desconectar sockets manualmente
+- Prevenir doble conexión de usuarios autenticados
