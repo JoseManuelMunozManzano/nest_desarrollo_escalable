@@ -263,3 +263,5 @@ Para ejecutar:
 ```
 yarn dev
 ```
+
+Para que funcione esta parte, el proyecto 04-teslo-shop debe estar ejecutándose. Ver sus instrucciones.
