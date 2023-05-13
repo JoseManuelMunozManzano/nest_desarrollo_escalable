@@ -3,7 +3,7 @@
 //
 // IMPORTANTE: La versión de socket.io-client debe ser la misma que la versión de socket.io de la parte servidor.
 // La versión del servidor aparece en: http://localhost:3001/socket.io/socket.io.js
-import { Manager } from 'socket.io-client';
+import { Manager, Socket } from 'socket.io-client';
 
 export const connectToServer = () => {
   // Trabajamos con el mánager porque nos da más flexibilidad y poder. La otra opción es trabajar con io directamente.
@@ -18,4 +18,22 @@ export const connectToServer = () => {
   // Para ver más información del socket que está conectado.
   // La información más útil está en socket.io, que es la del Manager.
   // console.log({ socket });
+
+  addListeners(socket);
+};
+
+// Indicaremos cuando hay conexión / desconexión con el servidor.
+const addListeners = (socket: Socket) => {
+  const serverStatusLabel = document.querySelector('#server-status');
+
+  // Escuchar eventos que vienen del servidor: socket.on
+  socket.on('connect', () => {
+    serverStatusLabel.innerHTML = 'CONNECTED';
+  });
+
+  socket.on('disconnect', () => {
+    serverStatusLabel.innerHTML = 'DISCONNECTED';
+  });
+
+  // Hablar con el servidor: socket.emit
 };
